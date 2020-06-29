@@ -78,12 +78,13 @@ def create_desktop_file(file_name, app_name, app_id, wm_class):
     file = open(HIDDEN_DESKTOP_FILES_DIR + '/' + file_name + '.desktop', 'w+')
 
     file.write('''[Desktop Entry]
+Type=Application
 Name=%s
 Icon=steam_icon_%s
+Exec=steam steam://rungameid/%s
 Terminal=false
-Type=Application
 StartupWMClass=%s
-NoDisplay=true''' % (app_name, app_id, wm_class))
+NoDisplay=true''' % (app_name, app_id, app_id, wm_class))
 
     file.close()
 
