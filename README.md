@@ -1,10 +1,27 @@
 # SIF (Steam Icons Fixer)
 
 **SIF is a simple Python script that allows the user to fix icons 
-of installed Steam games on Linux.**
+of installed Steam games on Linux, that are shown in dock or panel
+when the game is running.**
 
 I created this script because it was very frustrating how the game
 icons didn't fit the selected icon theme.
+
+This script was tested with
+[Numix-Circle](https://github.com/numixproject/numix-icon-theme-circle),
+[Numix-Square](https://github.com/numixproject/numix-icon-theme-square),
+[Papirus](https://github.com/PapirusDevelopmentTeam/papirus-icon-theme)
+and [Suru++](https://github.com/gusbemacbe/suru-plus/) icon themes.
+
+# Screenshots
+
+**Dock with icons before fix**<br>
+![Dock with icons before fix](images/default-dock.png)
+
+**Dock with icons after fix (Numix-Circle, Papirus, Suru++)**<br>
+![Dock with icons after fix](images/numix-circle-dock.png)
+![Dock with icons after fix](images/papirus-dock.png)
+![Dock with icons after fix](images/suru-plus-dock.png)
 
 # Description
 
@@ -27,7 +44,7 @@ chmod +x sif.py
 
 # Usage
 
-You can check which games can be fixed before applying the fix:
+You can **check** which games can be fixed before applying the fix:
 ```
 ./sif.py --icons
 ```
@@ -35,15 +52,19 @@ or:
 ```
 ./sif.py --pretend
 ```
-If commands above worked without problem, you can apply the fix:
+If commands above worked without a problem, you can **apply** the fix:
 ```
 ./sif.py 
 ```
-If you want to clear previous fixes before applying new ones:
+If you want to **clear** previous fixes before applying new ones:
 ```
 ./sif.py --clear
 ```
-If you want remove all changes and restore default icons:
+You can also fix only one specific game:
+```
+./sif.py --single APP_ID
+```
+If you want to **remove** all changes and restore default icons:
 ```
 ./sif.py --restore
 ```
@@ -52,7 +73,7 @@ If you want remove all changes and restore default icons:
 
 For the fix to work, I need to know WM_CLASS of each individual game.
 I can create fixes only for games which I have installed and I can get
-WM_CLASS from them.
+their WM_CLASS.
 
 If you want append your game to our database, you have to know **APP_ID**
 and **WM_CLASS** of this game.
@@ -76,7 +97,7 @@ Users with xorg can use xprop tool.
 
 #### Create issue or append database 
 
-You can open a [new issue](https://github.com/BlueManCZ/SIF/issues), where you insert APP_ID, WM_CLASS (and your icon theme),
+You can open a [new issue](https://github.com/BlueManCZ/SIF/issues), where you provide APP_ID, WM_CLASS (and your icon theme),
 and I will add your game to the database as soon as possible.
 
 You can also fork this repository, edit  [wm-class-database.json](https://github.com/BlueManCZ/SIF/blob/master/wm-class-database.json)
