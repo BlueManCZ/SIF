@@ -3,10 +3,12 @@
 import os
 import gi
 import json
+import urllib3
 
 gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk
 from optparse import OptionParser
+from signal import signal, SIGINT
 
 
 def verbose_print(string):
@@ -34,7 +36,7 @@ def get_steam_libraries():
     for line in content:
         if 'BaseInstallFolder' in line:
             _path = line.split('"')[3]
-            if not _path in found_libraries and os.path.isdir(_path + '/steamapps/common'):
+            if _path not in found_libraries and os.path.isdir(_path + '/steamapps/common'):
                 found_libraries.append(_path)
 
     return found_libraries
@@ -87,6 +89,7 @@ NoDisplay=true''' % (app_name, app_id, wm_class))
 
 
 def clear_directory(directory):
+    """Removes all files in the directory."""
     items = next(os.walk(directory))[2]
     if len(items) > 0:
         print('Clearing directory %s\n' % directory)
@@ -95,12 +98,51 @@ def clear_directory(directory):
             print(' Removed', item)
 
 
+def get_all_games_from_theme():
+    """Returns list of APP_IDs of Steam games that have icon in system icon theme."""
+    sample_icon = get_icon_path('nautilus')
+    icon_theme_path = sample_icon[:-len(sample_icon.split('/')[-1])]
+    games = [i.replace('_', '.').split('.')[2] for i in next(os.walk(icon_theme_path))[2] if 'steam_icon' in i]
+    return sorted(games, key=lambda item: int(item))
+
+
+def fetch_json(app_id):
+    """Fetches json file from Steam API for selected game."""
+    http = urllib3.PoolManager()
+    url = 'https://store.steampowered.com/api/appdetails?appids=' + app_id
+    resp = http.request('GET', url)
+    return resp.data.decode('utf-8')
+
+
+def get_game_name(json_string):
+    """Returns game name from json file."""
+    data = json.loads(json_string)
+    app_id = ''
+    if data is None:
+        return None
+    for dict_key in data.keys():
+        app_id = dict_key
+    if data[app_id]['success']:
+        return data[app_id]['data']['name']
+    return None
+
+
+def quit_handler(signal_received, frame):
+    print('\nSIGINT or CTRL-C detected. Exiting')
+    quit()
+
+
 if __name__ == "__main__":
+
+    signal(SIGINT, quit_handler)
 
     # Create options parsing
 
     parser = OptionParser()
 
+    parser.add_option("-b", "--browse",
+                      action="store_true", dest="browse", default=False,
+                      help="show all games with icon in system icon theme")
     parser.add_option("-c", "--clear",
                       action="store_true", dest="clear", default=False,
                       help="clear previous fixes before making new ones")
@@ -137,6 +179,20 @@ if __name__ == "__main__":
     GTK_THEME = Gtk.Settings.get_default().get_property('gtk-icon-theme-name')
 
     verbose_print('Working with %s icon theme.\n' % GTK_THEME)
+
+    # --browse
+
+    if options.browse:
+        print('This Steam games have icon in %s icon theme:' % GTK_THEME)
+        print('(Fetching names from https://steamdb.info/. This may take a while.)\n')
+        for g in get_all_games_from_theme():
+            name = get_game_name(fetch_json(g))
+            if options.verbose:
+                desktop = HIDDEN_DESKTOP_FILES_DIR + '/' + name + '.desktop'
+                print('%7s - %s (%s)' % (g, name, get_icon_path('steam_icon_' + g)))
+            else:
+                print('%7s - %s' % (g, name))
+        quit()
 
     # --restore
 
@@ -193,7 +249,7 @@ if __name__ == "__main__":
         for key in fixable_games:
             icon_path = get_icon_path('steam_icon_' + key)
             print('%s%s - %s' % ('* ' if key in database.keys() else '  ', fixable_games[key], icon_path))
-        print('\n* - game is in our database and can be fixed (if your icon theme supports it)')
+        print('\n* - game is in our database and can be fixed')
         quit()
 
     if options.single:
