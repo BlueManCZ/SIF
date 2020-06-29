@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/Steam-Icons-Fixer.iml" filepath="$PROJECT_DIR$/.idea/Steam-Icons-Fixer.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/SIF.iml" filepath="$PROJECT_DIR$/.idea/SIF.iml" />
     </modules>
   </component>
 </project>

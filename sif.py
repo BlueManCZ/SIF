@@ -1,7 +1,8 @@
+#!/usr/bin/env python3
+
 import os
 import gi
 import json
-import shutil
 
 gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk
@@ -18,11 +19,6 @@ def get_icon_path(filename, size=48):
     icon_theme = Gtk.IconTheme.get_default()
     icon_file = icon_theme.lookup_icon(filename, size, 0)
     return icon_file.get_filename() if icon_file else None
-
-
-def get_icons_for_games(games):
-    icons = []
-
 
 
 def get_steam_libraries():
@@ -103,8 +99,7 @@ if __name__ == "__main__":
     # Create options parsing
 
     parser = OptionParser()
-    # parser.add_option("-f", "--file", dest="filename",
-    #                  help="write report to FILE", metavar="FILE")
+
     parser.add_option("-c", "--clear",
                       action="store_true", dest="clear", default=False,
                       help="clear previous fixes before making new ones")
@@ -176,7 +171,7 @@ if __name__ == "__main__":
         print('[error] Steam library not found.')
         quit()
 
-    installed_games = get_installed_games(library_folders)
+    installed_games = dict(sorted(get_installed_games(library_folders).items(), key=lambda item: int(item[0])))
     fixable_games = get_fixable_games(installed_games)
 
     with open('wm-class-database.json') as json_file:
@@ -187,7 +182,8 @@ if __name__ == "__main__":
     if options.icons:
         print('These icons for your installed Steam games were found in %s icon theme:\n' % GTK_THEME)
         for key in fixable_games:
-            print('%s%s - %s' % ('* ' if key in database.keys() else '  ', fixable_games[key], get_icon_path('steam_icon_' + key)))
+            icon_path = get_icon_path('steam_icon_' + key)
+            print('%s%s - %s' % ('* ' if key in database.keys() else '  ', fixable_games[key], icon_path))
         print('\n* - game is in our database and can be fixed (if your icon theme supports it)')
         quit()
 
@@ -241,7 +237,8 @@ if __name__ == "__main__":
             else:
                 create_desktop_file(name, fixable_games[game], game, database[game])
                 if options.verbose:
-                    print('%7s - %s (%s)' % (game, fixable_games[game], HIDDEN_DESKTOP_FILES_DIR + '/' + name + '.desktop'))
+                    desktop = HIDDEN_DESKTOP_FILES_DIR + '/' + name + '.desktop'
+                    print('%7s - %s (%s)' % (game, fixable_games[game], desktop))
                 else:
                     print('%7s - %s' % (game, fixable_games[game]))
 
