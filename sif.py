@@ -150,6 +150,8 @@ if __name__ == "__main__":
         verbose_print('   - %s\n' % STEAM_INSTALL_DIR)
     else:
         print('[error] Steam installation directory %s not found.' % STEAM_INSTALL_DIR)
+        if HOME == '/root':
+            print('\nRun script as a normal user, not root.')
         quit()
 
     if os.path.isfile(STEAM_CONFIG_FILE):
