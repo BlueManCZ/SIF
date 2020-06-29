@@ -35,7 +35,7 @@ In this paragraph is explained, how SIF script works.
 
 # Installation
 
-All you need to do is clone this repository and set the script executable:
+All you need to do is clone this repository and make sure script is executable:
 ```
 git clone https://github.com/BlueManCZ/SIF.git
 cd SIF
@@ -113,3 +113,8 @@ This is a list of games that are impossible to fix right now.
 
 1. Euro Truck Simulator 2 (APP_ID [227300](https://steamdb.info/app/227300/))
 2. The Talos Principle (APP_ID [257510](https://steamdb.info/app/257510/))
+
+**Games with shared WM_CLASS:**
+
+Multiple games like Portal, Half-Life: Source, Half-Life 2 and all DLCs have the same WM_CLASS "hl2_linux".
+This makes it impossible to determine, which icon use for them.
