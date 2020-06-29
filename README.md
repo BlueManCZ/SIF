@@ -105,3 +105,11 @@ yourself and create a [pull request](https://github.com/BlueManCZ/SIF/pulls). Pl
 
 Your contribution is welcome.
 
+# Known issues
+
+This is a list of games that are impossible to fix right now.
+
+**Games with unknown WM_CLASS:**
+
+1. Euro Truck Simulator 2 (APP_ID [227300](https://steamdb.info/app/227300/))
+2. The Talos Principle (APP_ID [257510](https://steamdb.info/app/257510/))

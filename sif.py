@@ -65,7 +65,8 @@ def get_fixable_games(games):
     """Returns dictionary of games that have icon in system icon_theme."""
     fixable = games.copy()
     for app_id in games:
-        if not get_icon_path('steam_icon_' + app_id):
+        icon = get_icon_path('steam_icon_' + app_id)
+        if not icon or GTK_THEME not in icon:
             fixable.pop(app_id)
     return fixable
 
@@ -124,7 +125,13 @@ if __name__ == "__main__":
     # Set constant variables
 
     HOME = os.getenv('HOME')
-    STEAM_INSTALL_DIR = HOME + '/.local/share/Steam'
+
+    paths = [HOME + '/.local/share/Steam', HOME + '/.steam/steam']
+    STEAM_INSTALL_DIR = ''
+    for path in paths:
+        if os.path.isdir(path):
+            STEAM_INSTALL_DIR = path
+
     STEAM_CONFIG_FILE = STEAM_INSTALL_DIR + '/config/config.vdf'
     HIDDEN_DESKTOP_FILES_DIR = HOME + '/.local/share/applications/steam-icons-fixed'
     GTK_THEME = Gtk.Settings.get_default().get_property('gtk-icon-theme-name')
@@ -149,7 +156,7 @@ if __name__ == "__main__":
         verbose_print('[ok] Found Steam installation directory:')
         verbose_print('   - %s\n' % STEAM_INSTALL_DIR)
     else:
-        print('[error] Steam installation directory %s not found.' % STEAM_INSTALL_DIR)
+        print('[error] Steam installation directory not found.')
         if HOME == '/root':
             print('\nRun script as a normal user, not root.')
         quit()
