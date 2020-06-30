@@ -115,9 +115,10 @@ This is a list of games that are impossible to fix right now.
 
 **Games with unknown WM_CLASS:**
 
-1. Euro Truck Simulator 2 (APP_ID [227300](https://steamdb.info/app/227300/))
-2. The Talos Principle (APP_ID [257510](https://steamdb.info/app/257510/))
-3. Crossroads Inn (APP_ID [867290](https://steamdb.info/app/867290/))
+- Euro Truck Simulator 2 (APP_ID [227300](https://steamdb.info/app/227300/))
+- The Talos Principle (APP_ID [257510](https://steamdb.info/app/257510/))
+- Grow Home (APP_ID [323320](https://steamdb.info/app/323320/))
+- Crossroads Inn (APP_ID [867290](https://steamdb.info/app/867290/))
 
 **Games with shared WM_CLASS:**
 
