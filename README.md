@@ -9,7 +9,8 @@ user and it modifies files only in `~/.local/share/applications` directory.
 I created this script because it was very frustrating how the game
 icons didn't fit the selected icon theme.
 
-This script was tested with
+This script was tested on [Gnome](https://www.gnome.org/) with
+[Dash to Dock](https://micheleg.github.io/dash-to-dock/) extension and
 [Numix-Circle](https://github.com/numixproject/numix-icon-theme-circle),
 [Numix-Square](https://github.com/numixproject/numix-icon-theme-square),
 [Papirus](https://github.com/PapirusDevelopmentTeam/papirus-icon-theme)
