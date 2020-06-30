@@ -150,6 +150,9 @@ if __name__ == "__main__":
     parser.add_option("-c", "--clear",
                       action="store_true", dest="clear", default=False,
                       help="clear previous fixes before making new ones")
+    parser.add_option("-g", "--games",
+                      action="store_true", dest="games", default=False,
+                      help="show all installed games from your Steam library")
     parser.add_option("-i", "--icons",
                       action="store_true", dest="icons", default=False,
                       help="show available icons for installed Steam games")
@@ -243,6 +246,16 @@ if __name__ == "__main__":
 
     installed_games = dict(sorted(get_installed_games(library_folders).items(), key=lambda item: int(item[0])))
     fixable_games = get_fixable_games(installed_games)
+
+    # --games
+
+    if options.games:
+        print('These Steam games are currently installed:\n')
+        for game in installed_games:
+            print('%7s - %s' % (game, installed_games[game]))
+        quit()
+
+    # Load wm-class-database file
 
     if os.path.isfile(DATABASE_FILE):
         verbose_print('[ok] Found wm-class-database file:')

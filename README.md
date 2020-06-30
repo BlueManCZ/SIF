@@ -85,9 +85,10 @@ and **WM_CLASS** of this game.
 
 There are multiple ways, how to get APP_ID of Steam game.
 
-1. From the [steamdb.info](https://steamdb.info/).
-2. From the [store.steampowered.com](https://store.steampowered.com/) URL address.
-3. If the game has icon available in icon theme, you can use `./sif.py --icons` and determine APP_ID from icon name.
+1. You can use `./sif.py --games` to get APP_IDs of all installed games.
+2. From the [steamdb.info](https://steamdb.info/).
+3. From the [store.steampowered.com](https://store.steampowered.com/) URL address.
+
 
 #### Get WM_CLASS
 
