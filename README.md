@@ -1,8 +1,10 @@
 # SIF (Steam Icons Fixer)
 
-**SIF is a simple Python script that allows the user to fix icons 
-of installed Steam games on Linux, that are shown in dock or panel
-when the game is running.**
+**SIF is a simple Python script that allows the user to fix runtime
+icons of Steam games on Linux, that are shown in dock or panel.**
+
+It aims to be safe, simple and intuitive. Script must be started by regular
+user and it modifies files only in `~/.local/share/applications` directory.
 
 I created this script because it was very frustrating how the game
 icons didn't fit the selected icon theme.
@@ -113,6 +115,7 @@ This is a list of games that are impossible to fix right now.
 
 1. Euro Truck Simulator 2 (APP_ID [227300](https://steamdb.info/app/227300/))
 2. The Talos Principle (APP_ID [257510](https://steamdb.info/app/257510/))
+3. Crossroads Inn (APP_ID [867290](https://steamdb.info/app/867290/))
 
 **Games with shared WM_CLASS:**
 
