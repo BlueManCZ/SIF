@@ -1,17 +1,20 @@
 #!/usr/bin/env python3
 
-import os
+from optparse import OptionParser
+from signal import signal, SIGINT
+from pathlib import Path
+
 import gi
+import os
 import json
 import urllib3
 
 gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk
-from optparse import OptionParser
-from signal import signal, SIGINT
 
 
 def verbose_print(string):
+    """Print function that prints only if --verbose flag is present."""
     if options.verbose:
         print(string)
 
@@ -178,6 +181,7 @@ if __name__ == "__main__":
     STEAM_CONFIG_FILE = STEAM_INSTALL_DIR + '/config/config.vdf'
     HIDDEN_DESKTOP_FILES_DIR = HOME + '/.local/share/applications/steam-icons-fixed'
     GTK_THEME = Gtk.Settings.get_default().get_property('gtk-icon-theme-name')
+    DATABASE_FILE = Path(__file__).parent / 'wm-class-database.json'
 
     verbose_print('Working with %s icon theme.\n' % GTK_THEME)
 
@@ -240,8 +244,14 @@ if __name__ == "__main__":
     installed_games = dict(sorted(get_installed_games(library_folders).items(), key=lambda item: int(item[0])))
     fixable_games = get_fixable_games(installed_games)
 
-    with open('wm-class-database.json') as json_file:
-        database = json.load(json_file)
+    if os.path.isfile(DATABASE_FILE):
+        verbose_print('[ok] Found wm-class-database file:')
+        verbose_print('   - %s\n' % DATABASE_FILE)
+        with open(DATABASE_FILE) as json_file:
+            database = json.load(json_file)
+    else:
+        print('[error] wm-class-database file %s not found.' % DATABASE_FILE)
+        quit()
 
     # --icons
 
@@ -301,12 +311,26 @@ if __name__ == "__main__":
                 else:
                     print('%7s - %s' % (game, fixable_games[game]))
             else:
-                create_desktop_file(name, fixable_games[game], game, database[game])
-                if options.verbose:
-                    desktop = HIDDEN_DESKTOP_FILES_DIR + '/' + name + '.desktop'
-                    print('%7s - %s (%s)' % (game, fixable_games[game], desktop))
+                if isinstance(database[game], list):
+                    for record in database[game]:
+                        wm_class = record.split('=')[0]
+                        name = record.split('=')[1] or wm_class
+                        file_name = name.replace(' ', '-')
+                        create_desktop_file(file_name, name, game, wm_class)
+
+                        if options.verbose:
+                            desktop = HIDDEN_DESKTOP_FILES_DIR + '/' + wm_class.replace(' ', '-') + '.desktop'
+                            print('%7s - %s (%s)' % (game, name, desktop))
+                        else:
+                            print('%7s - %s' % (game, name))
                 else:
-                    print('%7s - %s' % (game, fixable_games[game]))
+                    create_desktop_file(name, fixable_games[game], game, database[game])
+
+                    if options.verbose:
+                        desktop = HIDDEN_DESKTOP_FILES_DIR + '/' + name + '.desktop'
+                        print('%7s - %s (%s)' % (game, fixable_games[game], desktop))
+                    else:
+                        print('%7s - %s' % (game, fixable_games[game]))
 
     if options.pretend:
         print('\nNo changes were made.')
