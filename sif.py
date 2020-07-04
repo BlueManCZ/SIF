@@ -317,7 +317,7 @@ if __name__ == "__main__":
 
     for game in fixable_games:
         if game in database.keys():
-            name = fixable_games[game].replace(' ', '-')
+            file_name = fixable_games[game].replace(' ', '-')
             if options.pretend:
                 if options.verbose:
                     print('%7s - %s - %s' % (game, fixable_games[game], get_icon_path('steam_icon_' + game)))
@@ -327,20 +327,20 @@ if __name__ == "__main__":
                 if isinstance(database[game], list):
                     for record in database[game]:
                         wm_class = record.split('=')[0]
-                        name = record.split('=')[1] or wm_class
-                        file_name = name.replace(' ', '-')
+                        name = record.split('=')[1] or fixable_games[game]
+                        file_name = wm_class.replace(' ', '-')
                         create_desktop_file(file_name, name, game, wm_class)
 
                         if options.verbose:
-                            desktop = HIDDEN_DESKTOP_FILES_DIR + '/' + wm_class.replace(' ', '-') + '.desktop'
+                            desktop = HIDDEN_DESKTOP_FILES_DIR + '/' + file_name + '.desktop'
                             print('%7s - %s (%s)' % (game, name, desktop))
                         else:
                             print('%7s - %s' % (game, name))
                 else:
-                    create_desktop_file(name, fixable_games[game], game, database[game])
+                    create_desktop_file(file_name, fixable_games[game], game, database[game])
 
                     if options.verbose:
-                        desktop = HIDDEN_DESKTOP_FILES_DIR + '/' + name + '.desktop'
+                        desktop = HIDDEN_DESKTOP_FILES_DIR + '/' + file_name + '.desktop'
                         print('%7s - %s (%s)' % (game, fixable_games[game], desktop))
                     else:
                         print('%7s - %s' % (game, fixable_games[game]))
