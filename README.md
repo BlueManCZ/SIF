@@ -10,7 +10,8 @@ I created this script because it was very frustrating how the game
 icons didn't fit the selected icon theme.
 
 This script was tested on [Gnome](https://www.gnome.org/) with
-[Dash to Dock](https://micheleg.github.io/dash-to-dock/) extension and
+[Dash to Dock](https://micheleg.github.io/dash-to-dock/) extension,
+[KDE](https://kde.org/) with [Plank](https://launchpad.net/plank) and
 [Numix-Circle](https://github.com/numixproject/numix-icon-theme-circle),
 [Numix-Square](https://github.com/numixproject/numix-icon-theme-square),
 [Papirus](https://github.com/PapirusDevelopmentTeam/papirus-icon-theme)
@@ -28,7 +29,7 @@ and [Suru++](https://github.com/gusbemacbe/suru-plus/) icon themes.
 
 # Description
 
-In this paragraph is explained, how SIF script works.
+In this paragraph is explained how SIF script works.
 
 1. Finds all Steam library folders and installed games.
 2. For each one game checks:
@@ -111,7 +112,7 @@ Your contribution is welcome.
 
 # Known issues
 
-This is a list of games that are impossible to fix right now.
+This is a list of games that are impossible to fix at the moment.
 
 **Games with unknown WM_CLASS:**
 
