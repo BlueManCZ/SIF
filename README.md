@@ -128,5 +128,5 @@ This is a list of games that are impossible to fix at the moment.
 
 **Games with shared WM_CLASS:**
 
-Multiple games like Portal, Half-Life: Source, Half-Life 2 and all DLCs have the same WM_CLASS "hl2_linux".
+Multiple games like Portal, Left 4 Dead 2, Half-Life: Source, Half-Life 2 and all DLCs have the same WM_CLASS "hl2_linux".
 This makes it impossible to determine, which icon use for them.
