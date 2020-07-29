@@ -109,24 +109,3 @@ You can also fork this repository, edit  [wm-class-database.json](https://github
 yourself and create a [pull request](https://github.com/BlueManCZ/SIF/pulls). Please keep the file sorted by APP_ID.
 
 Your contribution is welcome.
-
-# Known issues
-
-This is a list of games that are impossible to fix at the moment.
-
-**Games with unknown WM_CLASS:**
-
-- Euro Truck Simulator 2 (APP_ID [227300](https://steamdb.info/app/227300/screenshots/))
-- The Talos Principle (APP_ID [257510](https://steamdb.info/app/257510/screenshots/))
-- This War of Mine (APP_ID [282070](https://steamdb.info/app/282070/screenshots/))
-- BLACKHOLE (APP_ID [322680](https://steamdb.info/app/322680/screenshots/))
-- Grow Home (APP_ID [323320](https://steamdb.info/app/323320/screenshots/))
-- Kingdom: Classic (APP_ID [368230](https://steamdb.info/app/368230/screenshots/))
-- Layers of Fear (APP_ID [391720](https://steamdb.info/app/391720/screenshots/))
-- Motorsport Manager (APP_ID [415200](https://steamdb.info/app/415200/screenshots/))
-- Crossroads Inn (APP_ID [867290](https://steamdb.info/app/867290/screenshots/))
-
-**Games with shared WM_CLASS:**
-
-Multiple games like Portal, Left 4 Dead 2, Half-Life: Source, Half-Life 2 and all DLCs have the same WM_CLASS "hl2_linux".
-This makes it impossible to determine, which icon use for them.
