@@ -3,6 +3,7 @@
 from optparse import OptionParser
 from pathlib import Path
 from signal import signal, SIGINT
+from shutil import which
 
 import gi
 import json
@@ -31,6 +32,11 @@ def verbose_print(string):
     """Print function that prints only if --verbose flag is present."""
     if options.verbose:
         print(string)
+
+
+def print_warning(string):
+    """Print function that prints in Colors.WARNING colors."""
+    print(Colors.WARNING + string + Colors.ENDC)
 
 
 def get_icon_path(filename, size=48):
@@ -110,7 +116,7 @@ def clear_directory(directory):
     """Removes all files in the directory."""
     items = next(os.walk(directory))[2]
     if len(items) > 0:
-        print('Clearing directory %s\n' % directory)
+        print('\nClearing directory %s\n' % directory)
         for item in items:
             os.remove(directory + '/' + item)
             print(' Removed', item)
@@ -196,7 +202,7 @@ def steam_detect():
     if steam_pids:
         print('\nRunning Steam instance was found.' + Colors.WARNING)
         print('It is necessary to exit Steam for some changes to take effect.' + Colors.ENDC + Colors.BOLD)
-        choice = input('\nWould you like to terminate it now?' + Colors.ENDC + ' [Y/n]: ')
+        choice = input('\nWould you like to terminate Steam now?' + Colors.ENDC + ' [Y/n]: ')
         print()
         if choice in ['Y', 'y', 'Yes', 'yes', '']:
             terminate_processes(steam_pids)
@@ -205,6 +211,14 @@ def steam_detect():
                 pass
         return choice not in ['Y', 'y', 'Yes', 'yes', '']
     return False
+
+
+def update_desktop_database():
+    updater = which('update-desktop-database')
+    if updater:
+        os.system(updater + ' ' + HOME + '/.local/share/applications')
+    else:
+        print_warning('\nUpdate the desktop database for the changes to take effect.')
 
 
 def quit_handler(signal_received, frame):
@@ -340,11 +354,11 @@ if __name__ == "__main__":
                 restore_launch_options()
                 print('\nDefault Steam launch options restored.')
                 os.rmdir(HIDDEN_DESKTOP_FILES_DIR)
-                print('\nDirectory %s removed.\n' % HIDDEN_DESKTOP_FILES_DIR)
+                print('\nDirectory %s removed.' % HIDDEN_DESKTOP_FILES_DIR)
             else:
                 print('Couldn\'t restore default launch options. Exit Steam and try it again.')
                 quit()
-            print(Colors.WARNING + 'Update the desktop database for the changes to take effect.' + Colors.ENDC)
+            update_desktop_database()
         else:
             print('Default settings are already restored. Nothing to do here.')
         quit()
@@ -471,12 +485,11 @@ if __name__ == "__main__":
 
     if launch_option_counter > 0:
         if steam_detected:
-            print(Colors.WARNING + '\nSome games couldn\'t be fixed due to running Steam.\nExit Steam and try it '
-                                   'again.' + Colors.ENDC)
+            print_warning('\nSome games couldn\'t be fixed due to running Steam.\nExit Steam and try it again.')
         else:
             print('\n * - added fix to game launch options')
 
     if options.pretend:
         print('\nNo changes were made.')
     else:
-        print(Colors.WARNING + '\nUpdate the desktop database for the changes to take effect.' + Colors.ENDC)
+        update_desktop_database()
