@@ -151,19 +151,24 @@ def get_game_name(json_string):
     return None
 
 
-def fix_launch_option(app_id, wm_name):
+def fix_launch_option(app_id, wm_name, wm_name_alternative=''):
     """Add execution of fix-wm-class.sh file with wm_name of game as argument."""
+    if not wm_name_alternative:
+        wm_name_alternative = wm_name
     for conf_file in localconfig_paths:
         loaded = vdf.load(open(conf_file))
         apps = loaded['UserLocalConfigStore']['Software']['Valve']['Steam']['Apps']
         if app_id in apps.keys():
             app = apps[app_id]
-            if 'LaunchOptions' in app.keys():
-                app['LaunchOptions'] = re.sub('&\s\/.*fix-wm-class\.sh.*?;', '', app['LaunchOptions'])
-                app['LaunchOptions'] = app['LaunchOptions'] + '& ' + str(
-                    WM_CLASS_FIXER_FILE.absolute()) + ' ' + wm_name + ';'
+            if 'LaunchOptions' not in app.keys():
+                app['LaunchOptions'] = ''
+
+            app['LaunchOptions'] = re.sub('&\s\/.*fix-wm-class\.sh.*?;', '', app['LaunchOptions'])
+            if wm_name_alternative != wm_name:
+                app['LaunchOptions'] = app['LaunchOptions'] + '& ' + str(WM_CLASS_FIXER_FILE.absolute()) + ' "' + wm_name + '" "' + wm_name_alternative + '";'
             else:
-                app['LaunchOptions'] = '& ' + str(WM_CLASS_FIXER_FILE.absolute()) + ' ' + wm_name + ';'
+                app['LaunchOptions'] = app['LaunchOptions'] + '& ' + str(WM_CLASS_FIXER_FILE.absolute()) + ' "' + wm_name + '";'
+
         vdf.dump(loaded, open(conf_file, 'w'), pretty=True)
 
 
@@ -474,9 +479,16 @@ if __name__ == "__main__":
                             launch_option_counter += 1
                             continue
                         else:
+                            splitted = database['wm_names'][game].split('=')
+                            wm_name = splitted[0]
+                            wm_name_alternative = ''
+                            if len(splitted) > 1:
+                                wm_name_alternative = splitted[1]
                             launch_option_counter += 1
-                            fix_launch_option(game, database['wm_names'][game])
-                    create_desktop_file(file_name, fixable_games[game], game, wm_database[game])
+                            fix_launch_option(game, wm_name, wm_name_alternative)
+                            create_desktop_file(file_name, fixable_games[game], game, wm_name_alternative or wm_name)
+                    else:
+                        create_desktop_file(file_name, fixable_games[game], game, wm_database[game])
                     if options.verbose:
                         desktop = HIDDEN_DESKTOP_FILES_DIR + '/' + file_name + '.desktop'
                         print('%7s %s - %s (%s)' % (game, '*' if cond else ' ', fixable_games[game], desktop))
