@@ -1,19 +1,19 @@
 #!/usr/bin/env python3
 
+from gi import require_version
+from json import load, loads
 from optparse import OptionParser
 from pathlib import Path
+from re import sub
 from signal import signal, SIGINT
 from shutil import which
+from urllib3 import PoolManager
 
-import gi
-import json
 import os
-import re
 import subprocess
-import urllib3
 import vdf
 
-gi.require_version("Gtk", "3.0")
+require_version("Gtk", "3.0")
 from gi.repository import Gtk
 
 
@@ -132,7 +132,7 @@ def get_all_games_from_theme():
 
 def fetch_json(app_id):
     """Fetches json file from Steam API for selected game."""
-    http = urllib3.PoolManager()
+    http = PoolManager()
     url = 'https://store.steampowered.com/api/appdetails?appids=' + app_id
     resp = http.request('GET', url)
     return resp.data.decode('utf-8')
@@ -140,7 +140,7 @@ def fetch_json(app_id):
 
 def get_game_name(json_string):
     """Returns game name from json file."""
-    data = json.loads(json_string)
+    data = loads(json_string)
     app_id = ''
     if data is None:
         return None
@@ -163,7 +163,7 @@ def fix_launch_option(app_id, wm_name, wm_name_alternative=''):
             if 'LaunchOptions' not in app.keys():
                 app['LaunchOptions'] = ''
 
-            app['LaunchOptions'] = re.sub('&\s\/.*fix-wm-class\.sh.*?;', '', app['LaunchOptions'])
+            app['LaunchOptions'] = sub('&\s\/.*fix-wm-class\.sh.*?;', '', app['LaunchOptions'])
             if wm_name_alternative != wm_name:
                 app['LaunchOptions'] = app['LaunchOptions'] + '& ' + str(WM_CLASS_FIXER_FILE.absolute()) + ' "' + wm_name + '" "' + wm_name_alternative + '";'
             else:
@@ -180,7 +180,7 @@ def restore_launch_options():
         for app_id in apps.keys():
             app = apps[app_id]
             if 'LaunchOptions' in app.keys():
-                app['LaunchOptions'] = re.sub('&\s\/.*fix-wm-class\.sh.*?;', '', app['LaunchOptions'])
+                app['LaunchOptions'] = sub('&\s\/.*fix-wm-class\.sh.*?;', '', app['LaunchOptions'])
         vdf.dump(loaded, open(conf_file, 'w'), pretty=True)
 
 
@@ -382,7 +382,7 @@ if __name__ == "__main__":
         verbose_print('[ok] Found wm-class-database file:')
         verbose_print('   - %s\n' % DATABASE_FILE)
         with open(DATABASE_FILE) as json_file:
-            database = json.load(json_file)
+            database = load(json_file)
     else:
         print('[error] wm-class-database file %s not found.' % DATABASE_FILE)
         quit()
