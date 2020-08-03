@@ -39,45 +39,45 @@ def print_warning(string):
     print(Colors.WARNING + string + Colors.ENDC)
 
 
-def get_icon_path(filename, size=48):
-    """Returns icon path from system icon_theme based of filename and size."""
+def print_bold(string):
+    """Print function that prints bold text."""
+    print(Colors.BOLD + string + Colors.ENDC)
+
+
+def get_icon_path(icon_name, size=48):
+    """Returns icon path from system icon_theme based of icon_name and size."""
     icon_theme = Gtk.IconTheme.get_default()
-    icon_file = icon_theme.lookup_icon(filename, size, 0)
+    icon_file = icon_theme.lookup_icon(icon_name, size, 0)
     return icon_file.get_filename() if icon_file else None
 
 
 def get_steam_libraries():
-    """Returns list of Steam library folders."""
+    """Returns list of found Steam library folders."""
     found_libraries = []
-
     if os.path.isdir(STEAM_INSTALL_DIR + '/steamapps/common'):
         found_libraries.append(STEAM_INSTALL_DIR)
-
     with open(STEAM_CONFIG_FILE) as config:
         content = config.readlines()
-
     for line in content:
         if 'BaseInstallFolder' in line:
-            _path = line.split('"')[3]
-            if _path not in found_libraries and os.path.isdir(_path + '/steamapps/common'):
-                found_libraries.append(_path)
-
+            library_path = line.split('"')[3]
+            if library_path not in found_libraries and os.path.isdir(library_path + '/steamapps/common'):
+                found_libraries.append(library_path)
     return found_libraries
 
 
 def get_installed_games(libraries):
-    """Returns dictionary where key is app_id and value is name of the game."""
+    """Returns dictionary where keys are APP_IDs and values are names of installed games."""
     found_games = {}
-
-    for folder in libraries:
-        files = next(os.walk(folder + '/steamapps'))[2]
-        for file in files:
-            if 'appmanifest' in file and '.acf' in file:
-                with open(folder + '/steamapps/' + file) as manifest:
-                    data = manifest.readlines()
+    for library in libraries:
+        files = next(os.walk(library + '/steamapps'))[2]
+        for filename in files:
+            if 'appmanifest' in filename and '.acf' in filename:
+                with open(library + '/steamapps/' + filename) as manifest:
+                    content = manifest.readlines()
                 app_id = ''
                 game_name = ''
-                for line in data:
+                for line in content:
                     if '"appid"' in line:
                         app_id = line.split('"')[3]
                     elif '"name"' in line:
@@ -96,10 +96,9 @@ def get_fixable_games(games):
     return fixable
 
 
-def create_desktop_file(file_name, app_name, app_id, wm_class):
+def create_desktop_file(filename, app_name, app_id, wm_class):
     """Creates hidden desktop file for Steam game."""
-    file = open(HIDDEN_DESKTOP_FILES_DIR + '/' + file_name + '.desktop', 'w+')
-
+    file = open(HIDDEN_DESKTOP_FILES_DIR + '/' + filename + '.desktop', 'w+')
     file.write('''[Desktop Entry]
 Type=Application
 Name=%s
@@ -108,18 +107,17 @@ Exec=steam steam://rungameid/%s
 Terminal=false
 StartupWMClass=%s
 NoDisplay=true''' % (app_name, app_id, app_id, wm_class))
-
     file.close()
 
 
 def clear_directory(directory):
     """Removes all files in the directory."""
-    items = next(os.walk(directory))[2]
-    if len(items) > 0:
+    files = next(os.walk(directory))[2]
+    if len(files) > 0:
         print('\nClearing directory %s\n' % directory)
-        for item in items:
-            os.remove(directory + '/' + item)
-            print(' Removed', item)
+        for filename in files:
+            os.remove(directory + '/' + filename)
+            print(' Removed', filename)
 
 
 def get_all_games_from_theme():
@@ -151,10 +149,10 @@ def get_game_name(json_string):
     return None
 
 
-def fix_launch_option(app_id, wm_name, wm_name_alternative=''):
+def fix_launch_option(app_id, wm_name, wm_name_alt=''):
     """Add execution of fix-wm-class.sh file with wm_name of game as argument."""
-    if not wm_name_alternative:
-        wm_name_alternative = wm_name
+    if not wm_name_alt:
+        wm_name_alt = wm_name
     for conf_file in localconfig_paths:
         loaded = vdf.load(open(conf_file))
         apps = loaded['UserLocalConfigStore']['Software']['Valve']['Steam']['Apps']
@@ -162,13 +160,12 @@ def fix_launch_option(app_id, wm_name, wm_name_alternative=''):
             app = apps[app_id]
             if 'LaunchOptions' not in app.keys():
                 app['LaunchOptions'] = ''
-
-            app['LaunchOptions'] = sub('&\s\/.*fix-wm-class\.sh.*?;', '', app['LaunchOptions'])
-            if wm_name_alternative != wm_name:
-                app['LaunchOptions'] = app['LaunchOptions'] + '& ' + str(WM_CLASS_FIXER_FILE.absolute()) + ' "' + wm_name + '" "' + wm_name_alternative + '";'
+            app['LaunchOptions'] = sub('&\\s/.*fix-wm-class\\.sh.*?;', '', app['LaunchOptions'])
+            script = str(WM_CLASS_FIXER_SCRIPT.absolute())
+            if wm_name_alt != wm_name:
+                app['LaunchOptions'] += '& %s "%s" "%s";' % (script, wm_name, wm_name_alt)
             else:
-                app['LaunchOptions'] = app['LaunchOptions'] + '& ' + str(WM_CLASS_FIXER_FILE.absolute()) + ' "' + wm_name + '";'
-
+                app['LaunchOptions'] += '& %s "%s";' % (script, wm_name)
         vdf.dump(loaded, open(conf_file, 'w'), pretty=True)
 
 
@@ -180,23 +177,23 @@ def restore_launch_options():
         for app_id in apps.keys():
             app = apps[app_id]
             if 'LaunchOptions' in app.keys():
-                app['LaunchOptions'] = sub('&\s\/.*fix-wm-class\.sh.*?;', '', app['LaunchOptions'])
+                app['LaunchOptions'] = sub('&\\s/.*fix-wm-class\\.sh.*?;', '', app['LaunchOptions'])
         vdf.dump(loaded, open(conf_file, 'w'), pretty=True)
 
 
-def find_processes(name):
+def find_processes(process_name):
     """Returns all PIDs of program processes specified by name."""
     processes = subprocess.Popen(['ps', '-A'], stdout=subprocess.PIPE)
     output, error = processes.communicate()
     pids = []
     for line in output.splitlines():
-        if name in str(line):
+        if process_name in str(line):
             pids.append(int(line.split(None, 1)[0]))
     return pids
 
 
 def terminate_processes(pids):
-    """Terminate process with a specific PID"""
+    """Terminate process by their PIDs"""
     for pid in pids:
         os.kill(pid, 15)
 
@@ -205,9 +202,9 @@ def steam_detect():
     """Prompt user to exit Steam if running. Returns True if Steam remains running, else False."""
     steam_pids = find_processes('steam')
     if steam_pids:
-        print('\nRunning Steam instance was found.' + Colors.WARNING)
-        print('It is necessary to exit Steam for some changes to take effect.' + Colors.ENDC + Colors.BOLD)
-        choice = input('\nWould you like to terminate Steam now?' + Colors.ENDC + ' [Y/n]: ')
+        print('\nRunning Steam instance was found.')
+        print_warning('It is necessary to exit Steam for some changes to take effect.')
+        choice = input(Colors.BOLD + '\nWould you like to terminate Steam now?' + Colors.ENDC + ' [Y/n]: ')
         print()
         if choice in ['Y', 'y', 'Yes', 'yes', '']:
             terminate_processes(steam_pids)
@@ -221,12 +218,12 @@ def steam_detect():
 def update_desktop_database():
     updater = which('update-desktop-database')
     if updater:
-        os.system(updater + ' ' + HOME + '/.local/share/applications')
+        subprocess.run([updater, HOME + '/.local/share/applications'])
     else:
         print_warning('\nUpdate the desktop database for the changes to take effect.')
 
 
-def quit_handler(signal_received, frame):
+def quit_handler(_, __):
     """Handler for exit signal."""
     print('\nSIGINT or CTRL-C detected. Exiting')
     quit()
@@ -281,7 +278,7 @@ if __name__ == "__main__":
     HIDDEN_DESKTOP_FILES_DIR = HOME + '/.local/share/applications/steam-icons-fixed'
     GTK_THEME = Gtk.Settings.get_default().get_property('gtk-icon-theme-name')
     DATABASE_FILE = Path(__file__).parent / 'wm-class-database.json'
-    WM_CLASS_FIXER_FILE = Path(__file__).parent / 'fix-wm-class.sh'
+    WM_CLASS_FIXER_SCRIPT = Path(__file__).parent / 'fix-wm-class.sh'
 
     verbose_print('Working with %s icon theme.\n' % GTK_THEME)
 
@@ -290,13 +287,13 @@ if __name__ == "__main__":
     if options.browse:
         print('These Steam games have icon in %s icon theme:' % GTK_THEME)
         print('(Fetching names from https://steamdb.info/. This may take a while.)\n')
-        for g in get_all_games_from_theme():
-            name = get_game_name(fetch_json(g))
+        for game in get_all_games_from_theme():
+            name = get_game_name(fetch_json(game))
             if options.verbose:
                 desktop = HIDDEN_DESKTOP_FILES_DIR + '/' + name + '.desktop'
-                print('%7s - %s (%s)' % (g, name, get_icon_path('steam_icon_' + g)))
+                print('%7s - %s (%s)' % (game, name, get_icon_path('steam_icon_' + game)))
             else:
-                print('%7s - %s' % (g, name))
+                print('%7s - %s' % (game, name))
         quit()
 
     # Check for the presence of directories and files
@@ -305,16 +302,16 @@ if __name__ == "__main__":
         verbose_print('[ok] Found Steam installation directory:')
         verbose_print('   - %s\n' % STEAM_INSTALL_DIR)
     else:
-        print('[error] Steam installation directory not found.')
+        print_warning('[error] Steam installation directory not found.')
         if HOME == '/root':
-            print('\nRun script as a normal user, not root.')
+            print_warning('\nRun script as a normal user, not root.')
         quit()
 
     if os.path.isfile(STEAM_CONFIG_FILE):
         verbose_print('[ok] Found Steam configuration file:')
         verbose_print('   - %s\n' % STEAM_CONFIG_FILE)
     else:
-        print('[error] Steam configuration file %s not found.' % STEAM_CONFIG_FILE)
+        print_warning('[error] Steam configuration file %s not found.' % STEAM_CONFIG_FILE)
         quit()
 
     # this variable contains list of Steam library folders
@@ -326,11 +323,8 @@ if __name__ == "__main__":
             verbose_print('   - %s/steamapps' % path)
         verbose_print('')
     else:
-        print('[error] Steam library not found.')
+        print_warning('[error] Steam library not found.')
         quit()
-
-    installed_games = dict(sorted(get_installed_games(library_folders).items(), key=lambda item: int(item[0])))
-    fixable_games = get_fixable_games(installed_games)
 
     # Find localconfig.vdf files
 
@@ -338,16 +332,16 @@ if __name__ == "__main__":
     ids = next(os.walk(STEAM_INSTALL_DIR + '/userdata'))[1]
     if len(ids) > 0:
         for folder in ids:
-            file = STEAM_INSTALL_DIR + '/userdata/' + folder + '/config/localconfig.vdf'
-            if os.path.isfile(file):
-                localconfig_paths.append(file)
+            vdf_file = STEAM_INSTALL_DIR + '/userdata/' + folder + '/config/localconfig.vdf'
+            if os.path.isfile(vdf_file):
+                localconfig_paths.append(vdf_file)
         if len(localconfig_paths) > 0:
             verbose_print('[ok] Found Steam localconfig.vdf file:')
-            for file in localconfig_paths:
-                verbose_print('   - %s' % file)
+            for vdf_file in localconfig_paths:
+                verbose_print('   - %s' % vdf_file)
             verbose_print('')
     else:
-        print('[warning] Steam localconfig.vdf file not found.')
+        print_warning('[warning] Steam localconfig.vdf file not found.')
 
     # --restore
 
@@ -368,6 +362,9 @@ if __name__ == "__main__":
             print('Default settings are already restored. Nothing to do here.')
         quit()
 
+    installed_games = dict(sorted(get_installed_games(library_folders).items(), key=lambda item: int(item[0])))
+    fixable_games = get_fixable_games(installed_games)
+
     # --games
 
     if options.games:
@@ -380,11 +377,11 @@ if __name__ == "__main__":
 
     if os.path.isfile(DATABASE_FILE):
         verbose_print('[ok] Found wm-class-database file:')
-        verbose_print('   - %s\n' % DATABASE_FILE)
+        verbose_print('   - %s\n' % DATABASE_FILE.absolute())
         with open(DATABASE_FILE) as json_file:
             database = load(json_file)
     else:
-        print('[error] wm-class-database file %s not found.' % DATABASE_FILE)
+        print_warning('[error] wm-class-database file %s not found.' % DATABASE_FILE.absolute())
         quit()
 
     # --icons
@@ -403,6 +400,8 @@ if __name__ == "__main__":
         print('~ - game is fixable, but we have to edit its launch options')
         quit()
 
+    # --single
+
     if options.single:
         tmp = fixable_games.copy()
         for game in fixable_games:
@@ -411,7 +410,7 @@ if __name__ == "__main__":
         fixable_games = tmp
 
     if len(fixable_games) == 0:
-        print('No games found to fix.')
+        print_warning('No games found to fix.')
         quit()
 
     # Look for target directory or create new
@@ -428,7 +427,7 @@ if __name__ == "__main__":
             try:
                 os.mkdir(HIDDEN_DESKTOP_FILES_DIR)
             except OSError:
-                print('[error] Creation of the directory failed!')
+                print_warning('[error] Creation of the directory failed!')
                 print('   -', HIDDEN_DESKTOP_FILES_DIR)
                 quit()
             else:
@@ -462,10 +461,10 @@ if __name__ == "__main__":
             else:
                 if isinstance(wm_database[game], list):
                     for record in wm_database[game]:
-                        wm_class = record.split('=')[0]
+                        game_wm_class = record.split('=')[0]
                         name = record.split('=')[1] or fixable_games[game]
-                        file_name = wm_class.replace(' ', '-')
-                        create_desktop_file(file_name, name, game, wm_class)
+                        file_name = game_wm_class.replace(' ', '-')
+                        create_desktop_file(file_name, name, game, game_wm_class)
 
                         if options.verbose:
                             desktop = HIDDEN_DESKTOP_FILES_DIR + '/' + file_name + '.desktop'
@@ -480,13 +479,13 @@ if __name__ == "__main__":
                             continue
                         else:
                             splitted = database['wm_names'][game].split('=')
-                            wm_name = splitted[0]
-                            wm_name_alternative = ''
+                            game_wm_name = splitted[0]
+                            game_wm_name_alt = ''
                             if len(splitted) > 1:
-                                wm_name_alternative = splitted[1]
+                                game_wm_name_alt = splitted[1]
                             launch_option_counter += 1
-                            fix_launch_option(game, wm_name, wm_name_alternative)
-                            create_desktop_file(file_name, fixable_games[game], game, wm_name_alternative or wm_name)
+                            fix_launch_option(game, game_wm_name, game_wm_name_alt)
+                            create_desktop_file(file_name, fixable_games[game], game, game_wm_name_alt or game_wm_name)
                     else:
                         create_desktop_file(file_name, fixable_games[game], game, wm_database[game])
                     if options.verbose:
@@ -502,6 +501,6 @@ if __name__ == "__main__":
             print('\n * - added fix to game launch options')
 
     if options.pretend:
-        print('\nNo changes were made.')
+        print_warning('\nNo changes were made because --pretend option was used.')
     else:
         update_desktop_database()
