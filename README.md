@@ -1,9 +1,9 @@
 # SIF (Steam Icons Fixer)
 
 **SIF is a simple Python script that allows the user to fix runtime
-icons of Steam games on Linux, that are shown in dock or panel.**
+icons of Steam games on Linux that are displayed in dock or panel.**
 
-It aims to be safe, simple and intuitive. Script must be started by a regular
+**It aims to be safe, simple and intuitive.**<br>Script must be started by a regular
 user and it modifies only files in `~/.local/share/applications` directory.
 
 I created this script because it was very frustrating how the game
@@ -21,7 +21,7 @@ and [Suru++](https://github.com/gusbemacbe/suru-plus/) icon themes.
 
 # Description
 
-In this paragraph is explained how SIF script works.
+In this paragraph is explained **how SIF script works**.
 
 1. Finds all Steam library folders and installed games.
 2. For each one game checks:
@@ -32,7 +32,7 @@ In this paragraph is explained how SIF script works.
 
 # Installation
 
-All you need to do is clone this repository:
+All you need to do is **clone** this repository:
 ```
 git clone https://github.com/BlueManCZ/SIF.git
 cd SIF
