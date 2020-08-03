@@ -17,15 +17,7 @@ This script was tested on [Gnome](https://www.gnome.org/) with
 [Papirus](https://github.com/PapirusDevelopmentTeam/papirus-icon-theme)
 and [Suru++](https://github.com/gusbemacbe/suru-plus/) icon themes.
 
-# Screenshots
-
-**Dock with icons before fix**<br>
-![Dock with icons before fix](images/default-dock.png)
-
-**Dock with icons after fix (Numix-Circle, Papirus, Suru++)**<br>
-![Dock with icons after fix](images/numix-circle-dock.png)
-![Dock with icons after fix](images/papirus-dock.png)
-![Dock with icons after fix](images/suru-plus-dock.png)
+![Dock with icons after fix](images/sif.png)
 
 # Description
 
