@@ -434,6 +434,8 @@ if __name__ == "__main__":
                 verbose_print('[ok] Successfully created the directory:')
                 verbose_print('   - %s' % HIDDEN_DESKTOP_FILES_DIR)
 
+    steam_detected = False
+
     # Pretend or apply fixes
 
     if options.pretend:
@@ -441,12 +443,12 @@ if __name__ == "__main__":
     else:
         print('Creating .desktop files in %s' % HIDDEN_DESKTOP_FILES_DIR)
 
-    wm_database = {**database['wm_classes'], **database['wm_names']}
+        steam_detected = steam_detect()
+        if not options.pretend:
+            if not steam_detected:
+                print()
 
-    steam_detected = steam_detect()
-    if not options.pretend:
-        if not steam_detected:
-            print()
+    wm_database = {**database['wm_classes'], **database['wm_names']}
 
     launch_option_counter = 0
 
