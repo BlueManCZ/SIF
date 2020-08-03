@@ -3,8 +3,8 @@
 **SIF is a simple Python script that allows the user to fix runtime
 icons of Steam games on Linux, that are shown in dock or panel.**
 
-It aims to be safe, simple and intuitive. Script must be started by regular
-user and it modifies files only in `~/.local/share/applications` directory.
+It aims to be safe, simple and intuitive. Script must be started by a regular
+user and it modifies only files in `~/.local/share/applications` directory.
 
 I created this script because it was very frustrating how the game
 icons didn't fit the selected icon theme.
@@ -28,17 +28,19 @@ In this paragraph is explained how SIF script works.
     1. If game has a record in [wm-class-database.json](https://github.com/BlueManCZ/SIF/blob/master/wm-class-database.json).
     2. If particular icon is available in the selected icon theme.
 3. Creates hidden .desktop file with correct **Name**, **Icon** and **StartupWMClass** for each game.
+4. If required, add fix to Steam game launch options.
 
 # Installation
 
-All you need to do is clone this repository and make sure script is executable:
+All you need to do is clone this repository:
 ```
 git clone https://github.com/BlueManCZ/SIF.git
 cd SIF
-chmod +x sif.py
 ```
 
 # Usage
+
+### Check
 
 You can **check** which games can be fixed before applying the fix:
 ```
@@ -48,6 +50,9 @@ or:
 ```
 ./sif.py --pretend
 ```
+
+### Apply
+
 If commands above worked without a problem, you can **apply** the fix:
 ```
 ./sif.py 
@@ -60,6 +65,8 @@ You can also fix only one specific game:
 ```
 ./sif.py --single APP_ID
 ```
+
+### Restore
 If you want to **remove** all changes and restore default icons:
 ```
 ./sif.py --restore
