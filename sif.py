@@ -161,7 +161,7 @@ def fix_launch_option(app_id, wm_name, wm_name_alt=''):
             if 'LaunchOptions' not in app.keys():
                 app['LaunchOptions'] = ''
             app['LaunchOptions'] = sub('&\\s/.*fix-wm-class\\.sh.*?;', '', app['LaunchOptions'])
-            script = str(WM_CLASS_FIXER_SCRIPT.absolute())
+            script = str(WM_CLASS_FIXER_SCRIPT)
             if wm_name_alt != wm_name:
                 app['LaunchOptions'] += '& %s "%s" "%s";' % (script, wm_name, wm_name_alt)
             else:
@@ -274,11 +274,12 @@ if __name__ == "__main__":
         if os.path.isdir(path):
             STEAM_INSTALL_DIR = path
 
+    REAL_PATH = os.path.dirname(os.path.realpath(__file__))
     STEAM_CONFIG_FILE = STEAM_INSTALL_DIR + '/config/config.vdf'
     HIDDEN_DESKTOP_FILES_DIR = HOME + '/.local/share/applications/steam-icons-fixed'
     GTK_THEME = Gtk.Settings.get_default().get_property('gtk-icon-theme-name')
-    DATABASE_FILE = Path(__file__).parent / 'wm-class-database.json'
-    WM_CLASS_FIXER_SCRIPT = Path(__file__).parent / 'fix-wm-class.sh'
+    DATABASE_FILE = REAL_PATH + '/wm-class-database.json'
+    WM_CLASS_FIXER_SCRIPT = REAL_PATH + '/fix-wm-class.sh'
 
     verbose_print('Working with %s icon theme.\n' % GTK_THEME)
 
@@ -377,11 +378,11 @@ if __name__ == "__main__":
 
     if os.path.isfile(DATABASE_FILE):
         verbose_print('[ok] Found wm-class-database file:')
-        verbose_print('   - %s\n' % DATABASE_FILE.absolute())
+        verbose_print('   - %s\n' % DATABASE_FILE)
         with open(DATABASE_FILE) as json_file:
             database = load(json_file)
     else:
-        print_warning('[error] wm-class-database file %s not found.' % DATABASE_FILE.absolute())
+        print_warning('[error] wm-class-database file %s not found.' % DATABASE_FILE)
         quit()
 
     # --icons
