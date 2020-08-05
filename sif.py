@@ -3,7 +3,6 @@
 from gi import require_version
 from json import load, loads
 from optparse import OptionParser
-from pathlib import Path
 from re import sub
 from signal import signal, SIGINT
 from shutil import which
