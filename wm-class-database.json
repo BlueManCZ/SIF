@@ -4,6 +4,7 @@
     "620": "portal2_linux",
     "630": "swarm.exe",
     "730": "csgo_linux64",
+    "2630": ["cod2sp_s.exe=", "cod2mp_s.exe=Call of Duty 2 Multiplayer"],
     "8870": "bioshock.i386",
     "8930": "Civ5XP",
     "11020": "tmforever.exe",
