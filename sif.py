@@ -463,16 +463,19 @@ if __name__ == "__main__":
             else:
                 if isinstance(wm_database[game], list):
                     for record in wm_database[game]:
-                        game_wm_class = record.split('=')[0]
-                        name = record.split('=')[1] or fixable_games[game]
+                        game_wm_class = record
+                        name = fixable_games[game]
+                        if '=' in record:
+                            game_wm_class = record.split('=')[0]
+                            name = record.split('=')[1] or fixable_games[game]
                         file_name = game_wm_class.replace(' ', '-')
                         create_desktop_file(file_name, name, game, game_wm_class)
 
                         if options.verbose:
                             desktop = HIDDEN_DESKTOP_FILES_DIR + '/' + file_name + '.desktop'
-                            print('%7s - %s (%s)' % (game, name, desktop))
+                            print('%7s   - %s (%s)' % (game, name, desktop))
                         else:
-                            print('%7s - %s' % (game, name))
+                            print('%7s   - %s' % (game, name))
                 else:
                     cond = game in database['wm_names']
                     if cond:
