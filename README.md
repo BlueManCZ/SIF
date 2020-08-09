@@ -38,6 +38,8 @@ git clone https://github.com/BlueManCZ/SIF.git
 cd SIF
 ```
 
+Gentoo users may use [ebuild](https://github.com/BlueManCZ/edgets/blob/master/app-misc/sif/sif-9999.ebuild) in the [Edgets overlay](https://github.com/BlueManCZ/edgets/).
+
 # Usage
 
 ### Check
@@ -98,6 +100,10 @@ Users with xorg can use xprop tool.
 2. Open new terminal window and run `xprop WM_CLASS`.
 3. Switch to the game window and left click with mouse on it.
 4. Switch back to the terminal and get your WM_CLASS.
+
+#### Missing WM_CLASS?
+
+Some games have their WM_CLASS missing. In this case you can use a WM_NAME of the game. `xprop WM_NAME`
 
 #### Create issue or append database 
 
