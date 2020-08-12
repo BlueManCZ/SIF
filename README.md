@@ -32,7 +32,12 @@ In this paragraph is explained **how SIF script works**.
 
 # Installation
 
-All you need to do is **clone** this repository:
+Make sure you have [urllib3](https://pypi.org/project/urllib3/) and [vdf](https://pypi.org/project/vdf/)
+python modules installed. You can use your package manager or pip3 to install them.
+
+Example: `sudo pip3 install vdf`
+
+After that, all you need to do is **clone** this repository:
 ```
 git clone https://github.com/BlueManCZ/SIF.git
 cd SIF
