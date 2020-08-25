@@ -37,6 +37,8 @@ python modules installed. You can use your package manager or pip3 to install th
 
 Example: `sudo pip3 install vdf`
 
+Also make sure you have [xprop](https://www.mankier.com/1/xprop) installed. It should be available in the official repositories.
+
 After that, all you need to do is **clone** this repository:
 ```
 git clone https://github.com/BlueManCZ/SIF.git
