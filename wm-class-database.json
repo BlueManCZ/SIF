@@ -1,5 +1,6 @@
 {
   "wm_classes": {
+    "220": "hl2_linux",
     "570": "dota2",
     "620": "portal2_linux",
     "630": "swarm.exe",
@@ -87,7 +88,6 @@
     "70": "Half-Life",
     "80": "Condition Zero",
     "130": "Blue Shift",
-    "220": "HALF-LIFE 2 - OpenGL",
     "240": "Counter-Strike Source - OpenGL",
     "280": "HALF-LIFE - OpenGL",
     "300": "Day of Defeat Source - OpenGL",
@@ -107,6 +107,7 @@
     "282070": "This War of Mine",
     "286690": "Metro: Redux",
     "287390": "Metro: Redux=Metro: Last Light Redux",
+    "317400": "Portal Stories: Mel - OpenGL",
     "322680": "BLACKHOLE",
     "323320": "Grow Home",
     "368230": "Kingdom",
