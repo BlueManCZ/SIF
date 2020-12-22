@@ -154,7 +154,14 @@ def fix_launch_option(app_id, wm_name, wm_name_alt=''):
         wm_name_alt = wm_name
     for conf_file in localconfig_paths:
         loaded = vdf.load(open(conf_file))
-        apps = loaded['UserLocalConfigStore']['Software']['Valve']['Steam']['Apps']
+
+        steam = loaded['UserLocalConfigStore']['Software']['Valve']['Steam']
+
+        if 'Apps' in steam.keys():
+            apps = steam['Apps']
+        else:
+            apps = steam['apps']
+
         if app_id in apps.keys():
             app = apps[app_id]
             if 'LaunchOptions' not in app.keys():
