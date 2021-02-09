@@ -35,7 +35,7 @@ In this paragraph is explained **how SIF script works**.
 Make sure you have [urllib3](https://pypi.org/project/urllib3/) and [vdf](https://pypi.org/project/vdf/)
 python modules installed. You can use your package manager or pip3 to install them.
 
-Example: `sudo pip3 install vdf`
+Example: `pip3 install -r requirements.txt --user`
 
 Also make sure you have [xprop](https://www.mankier.com/1/xprop) installed. It should be available in the official repositories.
 
