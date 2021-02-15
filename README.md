@@ -37,7 +37,7 @@ python modules installed. You can use your package manager or pip3 to install th
 
 Example: `pip3 install -r requirements.txt --user`
 
-Also make sure you have [xprop](https://www.mankier.com/1/xprop) installed. It should be available in the official repositories.
+Also make sure you have [xdotool](https://www.mankier.com/1/xdotool) installed. It should be available in the official repositories.
 
 After that, all you need to do is **clone** this repository:
 ```

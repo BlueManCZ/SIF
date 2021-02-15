@@ -1,11 +1,9 @@
 #!/bin/sh
 
-until xprop -name "$1"
+until xdotool search --name "$1"
 do
 	sleep 1
 done
-if [ "$2" ]; then
-  xprop -name "$1" -f WM_CLASS 8s -set WM_CLASS "$2"
-else
-  xprop -name "$1" -f WM_CLASS 8s -set WM_CLASS "$1"
-fi
+
+WM_CLASS="$([ "$2" ] && echo "$2" || echo "$1")"
+xdotool search --name "$1" set_window --classname "$WM_CLASS" --class "$WM_CLASS"
