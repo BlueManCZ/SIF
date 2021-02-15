@@ -1,2 +1,3 @@
-vdf
+PyGObject
 urllib3
+vdf

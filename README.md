@@ -32,8 +32,8 @@ In this paragraph is explained **how SIF script works**.
 
 # Installation
 
-Make sure you have [urllib3](https://pypi.org/project/urllib3/) and [vdf](https://pypi.org/project/vdf/)
-python modules installed. You can use your package manager or pip3 to install them.
+Make sure you have installed Python modules [PyGObject](https://pypi.org/project/PyGObject/), [urllib3](https://pypi.org/project/urllib3/)
+and [vdf](https://pypi.org/project/vdf/). You can use your package manager or pip3 to install them.
 
 Example: `pip3 install -r requirements.txt --user`
 
