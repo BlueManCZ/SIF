@@ -284,7 +284,7 @@ if __name__ == "__main__":
     STEAM_CONFIG_FILE = STEAM_INSTALL_DIR + '/config/config.vdf'
     HIDDEN_DESKTOP_FILES_DIR = HOME + '/.local/share/applications/steam-icons-fixed'
     GTK_THEME = Gtk.Settings.get_default().get_property('gtk-icon-theme-name')
-    DATABASE_FILE = REAL_PATH + '/wm-class-database.json'
+    DATABASE_FILE = REAL_PATH + '/database.json'
     WM_CLASS_FIXER_SCRIPT = REAL_PATH + '/fix-wm-class.sh'
 
     verbose_print('Working with %s icon theme.\n' % GTK_THEME)

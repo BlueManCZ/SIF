@@ -25,7 +25,7 @@ In this paragraph is explained **how SIF script works**.
 
 1. Finds all Steam library folders and installed games.
 2. For each one game checks:
-    1. If game has a record in [wm-class-database.json](https://github.com/BlueManCZ/SIF/blob/master/wm-class-database.json).
+    1. If game has a record in [database.json](https://github.com/BlueManCZ/SIF/blob/master/database.json).
     2. If particular icon is available in the selected icon theme.
 3. Creates hidden .desktop file with correct **Name**, **Icon** and **StartupWMClass** for each game.
 4. If required, add fix to Steam game launch options.
@@ -117,7 +117,7 @@ Some games have their WM_CLASS missing. In this case you can use a WM_NAME of th
 You can open a [new issue](https://github.com/BlueManCZ/SIF/issues), where you provide APP_ID, WM_CLASS (and your icon theme),
 and I will add your game to the database as soon as possible.
 
-You can also fork this repository, edit  [wm-class-database.json](https://github.com/BlueManCZ/SIF/blob/master/wm-class-database.json)
+You can also fork this repository, edit [database.json](https://github.com/BlueManCZ/SIF/blob/master/database.json)
 yourself and create a [pull request](https://github.com/BlueManCZ/SIF/pulls). Please keep the file sorted by APP_ID.
 
 Your contribution is welcome.
