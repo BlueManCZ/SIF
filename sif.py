@@ -292,7 +292,7 @@ if __name__ == "__main__":
 
     if options.browse:
         print('These Steam games have icon in %s icon theme:' % GTK_THEME)
-        print('(Fetching names from https://steamdb.info/. This may take a while.)\n')
+        print('(Fetching names from https://store.steampowered.com/api. This may take a while.)\n')
         for game in get_all_games_from_theme():
             name = get_game_name(fetch_json(game))
             if options.verbose:
