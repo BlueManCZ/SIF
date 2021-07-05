@@ -4,9 +4,9 @@ from gi import require_version
 from json import load, loads
 from optparse import OptionParser
 from re import sub
+from requests import get
 from signal import signal, SIGINT
 from shutil import which
-from urllib3 import PoolManager
 
 import os
 import subprocess
@@ -129,15 +129,14 @@ def get_all_games_from_theme():
 
 def fetch_json(app_id):
     """Fetches json file from Steam API for selected game."""
-    http = PoolManager()
     url = 'https://store.steampowered.com/api/appdetails?appids=' + app_id
-    resp = http.request('GET', url)
-    return resp.data.decode('utf-8')
+    response = get(url)
+    return response.json()
 
 
-def get_game_name(json_string):
+def get_game_name(json):
     """Returns game name from json file."""
-    data = loads(json_string)
+    data = json
     app_id = ''
     if data is None:
         return None

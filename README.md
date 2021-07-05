@@ -32,7 +32,7 @@ In this paragraph is explained **how SIF script works**.
 
 # Installation
 
-Make sure you have installed Python modules [PyGObject](https://pypi.org/project/PyGObject/), [urllib3](https://pypi.org/project/urllib3/)
+Make sure you have installed Python modules [PyGObject](https://pypi.org/project/PyGObject/), [requests](https://pypi.org/project/requests/)
 and [vdf](https://pypi.org/project/vdf/). You can use your package manager or pip3 to install them.
 
 Example: `pip3 install -r requirements.txt --user`
