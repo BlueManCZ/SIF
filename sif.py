@@ -178,7 +178,14 @@ def restore_launch_options():
     """Removes changes made by "fix_launch_option" function."""
     for conf_file in localconfig_paths:
         loaded = vdf.load(open(conf_file))
-        apps = loaded['UserLocalConfigStore']['Software']['Valve']['Steam']['Apps']
+
+        steam = loaded['UserLocalConfigStore']['Software']['Valve']['Steam']
+
+        if 'Apps' in steam.keys():
+            apps = steam['Apps']
+        else:
+            apps = steam['apps']
+
         for app_id in apps.keys():
             app = apps[app_id]
             if 'LaunchOptions' in app.keys():
