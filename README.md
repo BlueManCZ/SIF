@@ -47,7 +47,7 @@ cd SIF
 
 Gentoo users may use [ebuild](https://github.com/BlueManCZ/edgets/blob/master/app-misc/sif/sif-9999.ebuild) in the [Edgets overlay](https://github.com/BlueManCZ/edgets/).
 
-Arch users may use [pkgbuild](https://aur.archlinux.org/cgit/aur.git/tree/PKGBUILD?h=sif-git) from the [AUR](https://aur.archlinux.org/packages/sif-git/)
+Arch users may use [pkgbuild](https://aur.archlinux.org/cgit/aur.git/tree/PKGBUILD?h=sif-git) from the [AUR](https://aur.archlinux.org/packages/sif-git/).
 
 # Usage
 
