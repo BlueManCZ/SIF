@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 from gi import require_version
-from json import load, loads
+from json import load
 from optparse import OptionParser
 from re import sub
 from requests import get
@@ -149,8 +149,6 @@ def get_game_name(json):
 
 def fix_launch_option(app_id, wm_name, wm_name_alt=''):
     """Add execution of fix-wm-class.sh file with wm_name of game as argument."""
-    if not wm_name_alt:
-        wm_name_alt = wm_name
     for conf_file in localconfig_paths:
         loaded = vdf.load(open(conf_file))
 
@@ -167,7 +165,7 @@ def fix_launch_option(app_id, wm_name, wm_name_alt=''):
                 app['LaunchOptions'] = ''
             app['LaunchOptions'] = sub('&\\s/.*fix-wm-class\\.sh.*?;', '', app['LaunchOptions'])
             script = str(WM_CLASS_FIXER_SCRIPT)
-            if wm_name_alt != wm_name:
+            if wm_name_alt:
                 app['LaunchOptions'] += '& %s "%s" "%s";' % (script, wm_name, wm_name_alt)
             else:
                 app['LaunchOptions'] += '& %s "%s";' % (script, wm_name)
