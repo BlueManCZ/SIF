@@ -55,11 +55,12 @@ def get_steam_libraries():
     found_libraries = []
     if os.path.isdir(STEAM_INSTALL_DIR + '/steamapps/common'):
         found_libraries.append(STEAM_INSTALL_DIR)
-    with open(STEAM_CONFIG_FILE) as config:
-        content = config.readlines()
-    for line in content:
-        if 'BaseInstallFolder' in line:
-            library_path = line.split('"')[3]
+
+    libraries_config = vdf.load(open(STEAM_INSTALL_DIR + '/config/libraryfolders.vdf'))
+
+    for library in libraries_config['libraryfolders'].values():
+        if 'path' in library:
+            library_path = library['path']
             if library_path not in found_libraries and os.path.isdir(library_path + '/steamapps/common'):
                 found_libraries.append(library_path)
     return found_libraries
@@ -93,6 +94,21 @@ def get_fixable_games(games):
         if not icon or GTK_THEME not in icon:
             fixable.pop(app_id)
     return fixable
+
+
+print_buffer = []
+
+
+def try_to_create_desktop_file(filename, app_name, app_id, wm_class, lo_fix=False):
+    """This function is a wrapper for create_desktop_file."""
+    filename = HIDDEN_DESKTOP_FILES_DIR + '/' + filename + '.desktop'
+    line = '%7s %s - %s%s' % (game, '*' if lo_fix else ' ', game_name, f' ({filename})' if options.verbose else '')
+    if line not in print_buffer:
+        print_buffer.append(line)
+        print(line)
+
+    if not options.pretend:
+        create_desktop_file(file_name, app_name, app_id, wm_class)
 
 
 def create_desktop_file(filename, app_name, app_id, wm_class):
@@ -214,7 +230,8 @@ def steam_detect():
     if steam_pids:
         print('\nRunning Steam instance was found.')
         print_warning('It is necessary to exit Steam for some changes to take effect.')
-        choice = input(Colors.BOLD + '\nWould you like to terminate Steam now?' + Colors.ENDC + ' [Y/n]: ')
+        text = f'\n{Colors.BOLD}Would you like to terminate Steam now?{Colors.ENDC} [{Colors.BOLD}Y{Colors.ENDC}/n]: '
+        choice = input(text)
         print()
         if choice in ['Y', 'y', 'Yes', 'yes', '']:
             terminate_processes(steam_pids)
@@ -318,9 +335,12 @@ if __name__ == "__main__":
             print_warning('\nRun script as a normal user, not root.')
         quit()
 
+    steam_config_file = {}
+
     if os.path.isfile(STEAM_CONFIG_FILE):
         verbose_print('[ok] Found Steam configuration file:')
         verbose_print('   - %s\n' % STEAM_CONFIG_FILE)
+        steam_config_file = vdf.load(open(STEAM_CONFIG_FILE))
     else:
         print_warning('[error] Steam configuration file %s not found.' % STEAM_CONFIG_FILE)
         quit()
@@ -445,70 +465,82 @@ if __name__ == "__main__":
                 verbose_print('[ok] Successfully created the directory:')
                 verbose_print('   - %s' % HIDDEN_DESKTOP_FILES_DIR)
 
-    steam_detected = False
+    wm_classes = database['wm_classes']
+    wm_names = database['wm_names']
 
-    # Pretend or apply fixes
+    steam_termination_required = False
+
+    for game in fixable_games:
+        if game in wm_names:
+            steam_termination_required = True
+            break
+
+    steam_detected = False
 
     if options.pretend:
         print('Installed games whose icons can be fixed:\n')
     else:
         print('Creating .desktop files in %s' % HIDDEN_DESKTOP_FILES_DIR)
 
-        steam_detected = steam_detect()
-        if not options.pretend:
-            if not steam_detected:
-                print()
+        if steam_termination_required:
+            steam_detected = steam_detect()
 
-    wm_database = {**database['wm_classes'], **database['wm_names']}
+        if not steam_detected:
+            print()
+
+    # All important work here
+
+    games_with_compat = steam_config_file['InstallConfigStore']['Software']['Valve']['Steam']['CompatToolMapping']
+
+    proton_games = []
+
+    for game in games_with_compat:
+        if any(x in games_with_compat[str(game)]['name'] for x in ['proton', 'Proton']):
+            proton_games.append(game)
 
     launch_option_counter = 0
 
     for game in fixable_games:
-        if game in wm_database:
-            file_name = fixable_games[game].replace(' ', '-')
-            if options.pretend:
-                if options.verbose:
-                    print('%7s - %s - %s' % (game, fixable_games[game], get_icon_path('steam_icon_' + game)))
-                else:
-                    print('%7s - %s' % (game, fixable_games[game]))
-            else:
-                if isinstance(wm_database[game], list):
-                    for record in wm_database[game]:
-                        game_wm_class = record
-                        name = fixable_games[game]
-                        if '=' in record:
-                            game_wm_class = record.split('=')[0]
-                            name = record.split('=')[1] or fixable_games[game]
-                        file_name = game_wm_class.replace(' ', '-')
-                        create_desktop_file(file_name, name, game, game_wm_class)
+        game_name = fixable_games[game]
+        file_name = game_name.replace(' ', '-')
 
-                        if options.verbose:
-                            desktop = HIDDEN_DESKTOP_FILES_DIR + '/' + file_name + '.desktop'
-                            print('%7s   - %s (%s)' % (game, name, desktop))
-                        else:
-                            print('%7s   - %s' % (game, name))
-                else:
-                    cond = game in database['wm_names']
-                    if cond:
-                        if steam_detected:
-                            launch_option_counter += 1
-                            continue
-                        else:
-                            splitted = database['wm_names'][game].split('=')
-                            game_wm_name = splitted[0]
-                            game_wm_name_alt = ''
-                            if len(splitted) > 1:
-                                game_wm_name_alt = splitted[1]
-                            launch_option_counter += 1
-                            fix_launch_option(game, game_wm_name, game_wm_name_alt)
-                            create_desktop_file(file_name, fixable_games[game], game, game_wm_name_alt or game_wm_name)
-                    else:
-                        create_desktop_file(file_name, fixable_games[game], game, wm_database[game])
-                    if options.verbose:
-                        desktop = HIDDEN_DESKTOP_FILES_DIR + '/' + file_name + '.desktop'
-                        print('%7s %s - %s (%s)' % (game, '*' if cond else ' ', fixable_games[game], desktop))
-                    else:
-                        print('%7s %s - %s' % (game, '*' if cond else ' ', fixable_games[game]))
+        if game in proton_games:
+            # Game uses Proton compatibility tool
+
+            game_wm_class = 'steam_app_' + game
+            try_to_create_desktop_file(file_name, game_name, game, game_wm_class)
+
+        elif game in wm_classes:
+            # Game is Linux native with WM_CLASS
+
+            if isinstance(wm_classes[game], list):
+                for record in wm_classes[game]:
+                    game_name = fixable_games[game]
+                    game_wm_class = record
+                    if '=' in record:
+                        game_wm_class = record.split('=')[0]
+                        game_name = record.split('=')[1] or fixable_games[game]
+                    file_name = game_wm_class.replace(' ', '-')
+                    try_to_create_desktop_file(file_name, game_name, game, game_wm_class)
+
+            else:
+                try_to_create_desktop_file(file_name, game_name, game, wm_classes[game])
+
+        elif game in wm_names:
+            # Game is Linux native without WM_CLASS. Using WM_NAME instead.
+            # Steam instance must me terminated for this to work.
+
+            if steam_detected:
+                launch_option_counter += 1
+                continue
+            else:
+                split = wm_names[game].split('=')
+                game_wm_name = split[0]
+                game_wm_name_alt = ''
+                if len(split) > 1:
+                    game_wm_name_alt = split[1]
+                fix_launch_option(game, game_wm_name, game_wm_name_alt)
+                try_to_create_desktop_file(file_name, fixable_games[game], game, game_wm_name_alt or game_wm_name, True)
 
     if launch_option_counter > 0:
         if steam_detected:
