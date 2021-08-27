@@ -415,13 +415,21 @@ if __name__ == "__main__":
         print_warning('[error] wm-class-database file %s not found.' % DATABASE_FILE)
         quit()
 
+    games_with_compat = steam_config_file['InstallConfigStore']['Software']['Valve']['Steam']['CompatToolMapping']
+
+    proton_games = []
+
+    for game in games_with_compat:
+        if any(x in games_with_compat[str(game)]['name'] for x in ['proton', 'Proton']):
+            proton_games.append(game)
+
     # --icons
 
     if options.icons:
         print('These icons for your installed Steam games were found in %s icon theme:\n' % GTK_THEME)
         for key in fixable_games:
             icon_path = get_icon_path('steam_icon_' + key)
-            if key in database['wm_classes'].keys():
+            if key in database['wm_classes'].keys() or key in proton_games:
                 print('* %s - %s' % (fixable_games[key], icon_path))
             elif key in database['wm_names'].keys():
                 print('~ %s - %s' % (fixable_games[key], icon_path))
@@ -489,14 +497,6 @@ if __name__ == "__main__":
             print()
 
     # All important work here
-
-    games_with_compat = steam_config_file['InstallConfigStore']['Software']['Valve']['Steam']['CompatToolMapping']
-
-    proton_games = []
-
-    for game in games_with_compat:
-        if any(x in games_with_compat[str(game)]['name'] for x in ['proton', 'Proton']):
-            proton_games.append(game)
 
     launch_option_counter = 0
 
