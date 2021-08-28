@@ -34,12 +34,12 @@ This paragraph explains **how SIF script works**.
 
 # Installation
 
-Make sure you have installed Python modules [PyGObject](https://pypi.org/project/PyGObject/), [requests](https://pypi.org/project/requests/)
-and [vdf](https://pypi.org/project/vdf/). You can use your package manager or pip3 to install them.
+Make sure you have installed Python modules **[PyGObject](https://pypi.org/project/PyGObject/)**, **[requests](https://pypi.org/project/requests/)**
+and **[vdf](https://pypi.org/project/vdf/)**. You can use your package manager or pip3 to install them.
 
 Example (after you clone the respository): `pip3 install -r requirements.txt --user`
 
-Also make sure you have [xdotool](https://www.mankier.com/1/xdotool) installed. It should be available in the official repositories.
+Also make sure you have **[xdotool](https://www.mankier.com/1/xdotool)** installed. It should be available in the official repositories.
 
 After that, all you need to do is **clone** this repository:
 ```
