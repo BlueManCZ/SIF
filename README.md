@@ -1,17 +1,19 @@
 # SIF (Steam Icons Fixer)
 
-**SIF is a simple Python script that allows the user to fix runtime
-icons of Steam games on Linux that are displayed in dock or panel.**
+**SIF is a simple Python script allowing you to fix runtime
+icons of Steam games displayed in dock or panel to match
+Linux system icon theme.**
 
-**It aims to be safe, simple and intuitive.**<br>Script must be started by a regular
-user and it modifies only files in `~/.local/share/applications` directory.
+**It aims to be safe, simple and intuitive.**<br>The script must be run by a regular
+user and modifies only files in `~/.local/share/applications` directory.
 
-I created this script because it was very frustrating how the game
-icons didn't fit the selected icon theme.
+I created this script because I find it very frustrating when the game
+icons don't fit the selected icon theme.
 
-This script was tested on [Gnome](https://www.gnome.org/) with
-[Dash to Dock](https://micheleg.github.io/dash-to-dock/) extension,
-[KDE](https://kde.org/) with [Plank](https://launchpad.net/plank) and
+The script was tested on [Gnome](https://www.gnome.org/) and [KDE](https://kde.org/)
+with [Dash to Dock](https://micheleg.github.io/dash-to-dock/),
+[Plank](https://launchpad.net/plank),
+[Latte](https://apps.kde.org/latte-dock/) and
 [Numix-Circle](https://github.com/numixproject/numix-icon-theme-circle),
 [Numix-Square](https://github.com/numixproject/numix-icon-theme-square),
 [Papirus](https://github.com/PapirusDevelopmentTeam/papirus-icon-theme)
@@ -21,21 +23,21 @@ and [Suru++](https://github.com/gusbemacbe/suru-plus/) icon themes.
 
 # Description
 
-In this paragraph is explained **how SIF script works**.
+This paragraph explains **how SIF script works**.
 
 1. Finds all Steam library folders and installed games.
 2. For each one game checks:
-    1. If game has a record in [database.json](https://github.com/BlueManCZ/SIF/blob/master/database.json).
+    1. If game has a record in [database.json](https://github.com/BlueManCZ/SIF/blob/master/database.json) or uses Proton compatibility tool.
     2. If particular icon is available in the selected icon theme.
 3. Creates hidden .desktop file with correct **Name**, **Icon** and **StartupWMClass** for each game.
-4. If required, add fix to Steam game launch options.
+4. If required, adds fix to Steam game launch options.
 
 # Installation
 
 Make sure you have installed Python modules [PyGObject](https://pypi.org/project/PyGObject/), [requests](https://pypi.org/project/requests/)
 and [vdf](https://pypi.org/project/vdf/). You can use your package manager or pip3 to install them.
 
-Example: `pip3 install -r requirements.txt --user`
+Example (after you clone the respository): `pip3 install -r requirements.txt --user`
 
 Also make sure you have [xdotool](https://www.mankier.com/1/xdotool) installed. It should be available in the official repositories.
 
@@ -50,6 +52,8 @@ Gentoo users may use [ebuild](https://github.com/BlueManCZ/edgets/blob/master/ap
 Arch users may use [pkgbuild](https://aur.archlinux.org/cgit/aur.git/tree/PKGBUILD?h=sif-git) from the [AUR](https://aur.archlinux.org/packages/sif-git/).
 
 # Usage
+
+See `./sif.py --help` for all options.
 
 ### Check
 
@@ -107,7 +111,7 @@ Users with xorg can use xprop tool.
 
 1. Start your game from Steam library.
 2. Open new terminal window and run `xprop WM_CLASS`.
-3. Switch to the game window and left click with mouse on it.
+3. Switch to the game window with Alt-Tab and left click with mouse on it.
 4. Switch back to the terminal and get your WM_CLASS.
 
 #### Missing WM_CLASS?
