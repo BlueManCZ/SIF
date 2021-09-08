@@ -56,13 +56,16 @@ def get_steam_libraries():
     if os.path.isdir(STEAM_INSTALL_DIR + '/steamapps/common'):
         found_libraries.append(STEAM_INSTALL_DIR)
 
-    libraries_config = vdf.load(open(STEAM_INSTALL_DIR + '/config/libraryfolders.vdf'))
+    libraries_config = {}
+    if LIBRARY_FOLDERS_FILE:
+        libraries_config = vdf.load(open(LIBRARY_FOLDERS_FILE))
 
-    for library in libraries_config['libraryfolders'].values():
-        if 'path' in library:
-            library_path = library['path']
-            if library_path not in found_libraries and os.path.isdir(library_path + '/steamapps/common'):
-                found_libraries.append(library_path)
+    if libraries_config and 'libraryfolders' in libraries_config:
+        for library in libraries_config['libraryfolders'].values():
+            if 'path' in library:
+                library_path = library['path']
+                if library_path not in found_libraries and os.path.isdir(library_path + '/steamapps/common'):
+                    found_libraries.append(library_path)
     return found_libraries
 
 
@@ -234,8 +237,11 @@ def steam_detect():
         choice = input(text)
         print()
         if choice in ['Y', 'y', 'Yes', 'yes', '']:
-            terminate_processes(steam_pids)
-            print('Terminating Steam processes.')
+            try:
+                terminate_processes(steam_pids)
+                print('Terminating Steam processes.')
+            except ProcessLookupError:
+                print('Steam processes already terminated.')
             while find_processes('steam'):
                 pass
         return choice not in ['Y', 'y', 'Yes', 'yes', '']
@@ -294,21 +300,30 @@ if __name__ == "__main__":
     # Set constant variables
 
     HOME = os.getenv('HOME')
+    GTK_THEME = Gtk.Settings.get_default().get_property('gtk-icon-theme-name')
+
+    verbose_print('Working with %s icon theme.\n' % GTK_THEME)
 
     paths = [HOME + '/.local/share/Steam', HOME + '/.steam/steam']
     STEAM_INSTALL_DIR = ''
     for path in paths:
         if os.path.isdir(path):
             STEAM_INSTALL_DIR = path
+            verbose_print('[ok] Found Steam installation directory:')
+            verbose_print('   - %s\n' % STEAM_INSTALL_DIR)
+            break
+
+    if not STEAM_INSTALL_DIR:
+        print_warning('[error] Steam installation directory not found.')
+        if HOME == '/root':
+            print_warning('\nRun script as a normal user, not root.')
+        quit()
 
     REAL_PATH = os.path.dirname(os.path.realpath(__file__))
     STEAM_CONFIG_FILE = STEAM_INSTALL_DIR + '/config/config.vdf'
     HIDDEN_DESKTOP_FILES_DIR = HOME + '/.local/share/applications/steam-icons-fixed'
-    GTK_THEME = Gtk.Settings.get_default().get_property('gtk-icon-theme-name')
     DATABASE_FILE = REAL_PATH + '/database.json'
     WM_CLASS_FIXER_SCRIPT = REAL_PATH + '/fix-wm-class.sh'
-
-    verbose_print('Working with %s icon theme.\n' % GTK_THEME)
 
     # --browse
 
@@ -326,15 +341,6 @@ if __name__ == "__main__":
 
     # Check for the presence of directories and files
 
-    if os.path.isdir(STEAM_INSTALL_DIR):
-        verbose_print('[ok] Found Steam installation directory:')
-        verbose_print('   - %s\n' % STEAM_INSTALL_DIR)
-    else:
-        print_warning('[error] Steam installation directory not found.')
-        if HOME == '/root':
-            print_warning('\nRun script as a normal user, not root.')
-        quit()
-
     steam_config_file = {}
 
     if os.path.isfile(STEAM_CONFIG_FILE):
@@ -344,6 +350,18 @@ if __name__ == "__main__":
     else:
         print_warning('[error] Steam configuration file %s not found.' % STEAM_CONFIG_FILE)
         quit()
+
+    files = [STEAM_INSTALL_DIR + '/config/libraryfolders.vdf', STEAM_INSTALL_DIR + '/steamapps/libraryfolders.vdf']
+    LIBRARY_FOLDERS_FILE = ''
+    for file in files:
+        if os.path.isfile(file):
+            LIBRARY_FOLDERS_FILE = file
+            verbose_print('[ok] Found Steam libraryfolders.vdf file:')
+            verbose_print('   - %s\n' % LIBRARY_FOLDERS_FILE)
+            break
+
+    if not STEAM_INSTALL_DIR:
+        print_warning('[warning] Steam libraryfolders.vdf file not found.')
 
     # this variable contains list of Steam library folders
     library_folders = get_steam_libraries()
