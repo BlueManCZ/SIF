@@ -415,7 +415,10 @@ if __name__ == "__main__":
         print_warning('[error] wm-class-database file %s not found.' % DATABASE_FILE)
         quit()
 
-    games_with_compat = steam_config_file['InstallConfigStore']['Software']['Valve']['Steam']['CompatToolMapping']
+    games_with_compat = {}
+
+    if 'CompatToolMapping' in steam_config_file['InstallConfigStore']['Software']['Valve']['Steam']:
+        games_with_compat = steam_config_file['InstallConfigStore']['Software']['Valve']['Steam']['CompatToolMapping']
 
     proton_games = []
 
