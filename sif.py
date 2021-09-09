@@ -60,12 +60,22 @@ def get_steam_libraries():
     if LIBRARY_FOLDERS_FILE:
         libraries_config = vdf.load(open(LIBRARY_FOLDERS_FILE))
 
-    if libraries_config and 'libraryfolders' in libraries_config:
-        for library in libraries_config['libraryfolders'].values():
+    if libraries_config:
+        keyword = ''
+        if 'libraryfolders' in libraries_config:
+            keyword = 'libraryfolders'
+        elif 'LibraryFolders' in libraries_config:
+            keyword = 'LibraryFolders'
+
+        for library in libraries_config[keyword].values():
+            library_path = ''
             if 'path' in library:
                 library_path = library['path']
-                if library_path not in found_libraries and os.path.isdir(library_path + '/steamapps/common'):
-                    found_libraries.append(library_path)
+            elif isinstance(library, str):
+                library_path = library
+
+            if library_path and library_path not in found_libraries and os.path.isdir(library_path + '/steamapps/common'):
+                found_libraries.append(library_path)
     return found_libraries
 
 
