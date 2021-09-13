@@ -312,13 +312,20 @@ if __name__ == "__main__":
     HOME = os.getenv('HOME')
     GTK_THEME = Gtk.Settings.get_default().get_property('gtk-icon-theme-name')
 
-    verbose_print('Working with %s icon theme.\n' % GTK_THEME)
+    verbose_print('Current icon theme: %s\n' % GTK_THEME)
 
     paths = [HOME + '/.local/share/Steam', HOME + '/.steam/steam']
     STEAM_INSTALL_DIR = ''
     for path in paths:
         if os.path.isdir(path):
             STEAM_INSTALL_DIR = path
+
+            version_file = STEAM_INSTALL_DIR + '/ubuntu12_32/steam-runtime/version.txt'
+            if os.path.isfile(version_file):
+                with open(version_file, 'r') as file:
+                    version = file.readline()
+                    verbose_print('Steam version: %s' % version)
+
             verbose_print('[ok] Found Steam installation directory:')
             verbose_print('   - %s\n' % STEAM_INSTALL_DIR)
             break
@@ -435,12 +442,12 @@ if __name__ == "__main__":
     # Load wm-class-database file
 
     if os.path.isfile(DATABASE_FILE):
-        verbose_print('[ok] Found wm-class-database file:')
+        verbose_print('[ok] Found database.json file:')
         verbose_print('   - %s\n' % DATABASE_FILE)
         with open(DATABASE_FILE) as json_file:
             database = load(json_file)
     else:
-        print_warning('[error] wm-class-database file %s not found.' % DATABASE_FILE)
+        print_warning('[error] database.json file %s not found.' % DATABASE_FILE)
         quit()
 
     games_with_compat = {}
