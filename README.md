@@ -118,6 +118,11 @@ Users with xorg can use xprop tool.
 
 Some games have their WM_CLASS missing. In this case you can use a WM_NAME of the game. `xprop WM_NAME`
 
+#### Proton games are supported natively
+
+Do not contribute Proton games to the database, because they are supported natively.
+WM_CLASS of each Proton game is `steam_app_<APP_ID>`. It is calculated automatically.
+
 #### Create issue or append database 
 
 You can open a [new issue](https://github.com/BlueManCZ/SIF/issues), where you provide APP_ID, WM_CLASS (and your icon theme),
