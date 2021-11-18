@@ -575,8 +575,9 @@ if __name__ == "__main__":
             # Game is Linux native without WM_CLASS. Using WM_NAME instead.
             # Steam instance must me terminated for this to work.
 
+            launch_option_counter += 1
+
             if steam_detected:
-                launch_option_counter += 1
                 continue
             else:
                 split = wm_names[game].split('=')
