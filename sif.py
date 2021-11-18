@@ -310,7 +310,14 @@ if __name__ == "__main__":
     # Set constant variables
 
     HOME = os.getenv('HOME')
-    GTK_THEME = Gtk.Settings.get_default().get_property('gtk-icon-theme-name')
+
+    gtk_settings = Gtk.Settings.get_default()
+
+    if gtk_settings:
+        GTK_THEME = gtk_settings.get_property('gtk-icon-theme-name')
+    else:
+        print_warning('[error] GTK settings not found.')
+        quit()
 
     verbose_print('Current icon theme: %s\n' % GTK_THEME)
 
