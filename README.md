@@ -1,8 +1,12 @@
 # SIF (Steam Icons Fixer)
 
+![Dock with icons after fix](images/sif.png)
+
 **SIF is a simple Python script allowing you to fix runtime
 icons of Steam games displayed in dock or panel to match
 Linux system icon theme.**
+
+![Animation](images/animation.svg)
 
 **It aims to be safe, simple and intuitive.**<br>The script must be run by a regular
 user and modifies only files in `~/.local/share/applications` directory.
@@ -18,8 +22,6 @@ with [Dash to Dock](https://micheleg.github.io/dash-to-dock/),
 [Numix-Square](https://github.com/numixproject/numix-icon-theme-square),
 [Papirus](https://github.com/PapirusDevelopmentTeam/papirus-icon-theme)
 and [Suru++](https://github.com/gusbemacbe/suru-plus/) icon themes.
-
-![Dock with icons after fix](images/sif.png)
 
 # Description
 
