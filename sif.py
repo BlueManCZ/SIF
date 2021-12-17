@@ -493,7 +493,7 @@ if __name__ == "__main__":
                 tmp.pop(game)
         fixable_games = tmp
 
-    if len(fixable_games) == 0:
+    if not fixable_games:
         print_warning('No games found to fix.')
         quit()
 
