@@ -25,14 +25,7 @@ and [Suru++](https://github.com/gusbemacbe/suru-plus/) icon themes.
 
 # Description
 
-This paragraph explains **how SIF script works**.
-
-1. Finds all Steam library folders and installed games.
-2. For each one game checks:
-    1. If game has a record in [database.json](https://github.com/BlueManCZ/SIF/blob/master/database.json) or uses Proton compatibility tool.
-    2. If particular icon is available in the selected icon theme.
-3. Creates hidden .desktop file with correct **Name**, **Icon** and **StartupWMClass** for each game.
-4. If required, adds fix to Steam game launch options.
+Visit [wiki/Description](https://github.com/BlueManCZ/SIF/wiki/Description).
 
 # Installation
 
