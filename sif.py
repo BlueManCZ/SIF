@@ -286,6 +286,9 @@ if __name__ == "__main__":
     parser.add_option("-c", "--clear",
                       action="store_true", dest="clear", default=False,
                       help="clear previous fixes before making new ones")
+    parser.add_option("-d", "--database",
+                      action="store_true", dest="database", default=False,
+                      help="list all games in database")
     parser.add_option("-g", "--games",
                       action="store_true", dest="games", default=False,
                       help="show all installed games from your Steam library")
@@ -474,9 +477,9 @@ if __name__ == "__main__":
         print('These icons for your installed Steam games were found in %s icon theme:\n' % GTK_THEME)
         for key in fixable_games:
             icon_path = get_icon_path('steam_icon_' + key)
-            if key in database['wm_classes'].keys() or key in proton_games:
+            if key in database['wm_classes'] or key in proton_games:
                 print('* %s - %s' % (fixable_games[key], icon_path))
-            elif key in database['wm_names'].keys():
+            elif key in database['wm_names']:
                 print('~ %s - %s' % (fixable_games[key], icon_path))
             else:
                 print('  %s - %s' % (fixable_games[key], icon_path))
@@ -484,14 +487,25 @@ if __name__ == "__main__":
         print('~ - game is fixable, but we have to edit its launch options')
         quit()
 
+    # --database
+
+    if options.database:
+        print('These games are in the database:\n')
+        print('WM_CLASS:')
+        for key in database['wm_classes']:
+            name = get_game_name(fetch_json(key))
+            print(f"{key} - {name}")
+        print('\nWM_NAME:')
+        for key in database['wm_names']:
+            name = get_game_name(fetch_json(key))
+            print(f"{key} - {name}")
+        quit()
+
     # --single
 
     if options.single:
-        tmp = fixable_games.copy()
-        for game in fixable_games:
-            if game != options.single:
-                tmp.pop(game)
-        fixable_games = tmp
+        if options.single in fixable_games:
+            fixable_games = [options.single]
 
     if not fixable_games:
         print_warning('No games found to fix.')
