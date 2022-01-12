@@ -474,17 +474,21 @@ if __name__ == "__main__":
     # --icons
 
     if options.icons:
-        print('These icons for your installed Steam games were found in %s icon theme:\n' % GTK_THEME)
+        print(f"These icons for your installed Steam games were found in {GTK_THEME} icon theme:\n")
+        margin = 0
+        for name in fixable_games.values():
+            if len(name) > margin:
+                margin = len(name)
         for key in fixable_games:
-            icon_path = get_icon_path('steam_icon_' + key)
-            if key in database['wm_classes'] or key in proton_games:
-                print('* %s - %s' % (fixable_games[key], icon_path))
-            elif key in database['wm_names']:
-                print('~ %s - %s' % (fixable_games[key], icon_path))
-            else:
-                print('  %s - %s' % (fixable_games[key], icon_path))
-        print('\n* - game is in our database and can be fixed')
-        print('~ - game is fixable, but we have to edit its launch options')
+            icon_path = get_icon_path("steam_icon_" + key)
+            symbol = " "
+            if key in database["wm_classes"] or key in proton_games:
+                symbol = "*"
+            elif key in database["wm_names"]:
+                symbol = "~"
+            print(f"{symbol} {Colors.BOLD}{fixable_games[key]:<{margin}}{Colors.ENDC} - {icon_path}")
+        print("\n* - game is in our database and can be fixed")
+        print("~ - script will edit launch options of the game")
         quit()
 
     # --database
