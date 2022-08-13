@@ -99,7 +99,8 @@ def get_installed_games(libraries):
                         app_id = line.split('"')[3]
                     elif '"name"' in line:
                         app_name = line.split('"')[3]
-                found_games[app_id] = app_name
+                if app_id:
+                    found_games[app_id] = app_name
     return found_games
 
 
