@@ -393,7 +393,7 @@ if __name__ == "__main__":
 
     verbose_print("Current icon theme: %s\n" % GTK_THEME)
 
-    paths = [HOME + "/.local/share/Steam", HOME + "/.steam/steam"]
+    paths = [HOME + "/.local/share/Steam", HOME + "/.steam/steam", HOME + "/.var/app/com.valvesoftware.Steam/.local/share/Steam"]
     STEAM_INSTALL_DIR = ""
     for path in paths:
         if os.path.isdir(path):
