@@ -12,17 +12,14 @@ import os
 import subprocess
 import vdf
 
-require_version("Gtk", "3.0")
-from gi.repository import Gtk
-
 
 class Colors:
     HEADER = "\033[95m"
-    OKBLUE = "\033[94m"
-    OKGREEN = "\033[92m"
+    BLUE = "\033[94m"
+    GREEN = "\033[92m"
     WARNING = "\033[93m"
     FAIL = "\033[91m"
-    ENDC = "\033[0m"
+    END = "\033[0m"
     BOLD = "\033[1m"
     UNDERLINE = "\033[4m"
 
@@ -35,18 +32,18 @@ def verbose_print(string):
 
 def print_warning(string):
     """Print function that prints in WARNING color."""
-    print(Colors.WARNING + string + Colors.ENDC)
+    print(Colors.WARNING + string + Colors.END)
 
 
 def print_bold(string):
     """Print function that prints bold text."""
-    print(Colors.BOLD + string + Colors.ENDC)
+    print(Colors.BOLD + string + Colors.END)
 
 
 def get_icon_path(icon_name, size=48):
     """Returns icon path from system icon_theme based of icon_name and size."""
     icon_theme = Gtk.IconTheme.get_default()
-    icon_file = icon_theme.lookup_icon(icon_name, size, 0)
+    icon_file = icon_theme.lookup_icon(icon_name, size, IconLookupFlags(0))
     return icon_file.get_filename() if icon_file else None
 
 
@@ -61,13 +58,17 @@ def get_steam_libraries():
         libraries_config = vdf.load(open(LIBRARY_FOLDERS_FILE))
 
     if libraries_config:
-        keyword = ""
-        if "libraryfolders" in libraries_config:
-            keyword = "libraryfolders"
-        elif "LibraryFolders" in libraries_config:
-            keyword = "LibraryFolders"
+        dict_key = get_possible_key(
+            libraries_config, "libraryfolders", "LibraryFolders"
+        )
 
-        for library in libraries_config[keyword].values():
+        if not dict_key:
+            print_warning(
+                "[error] No LibraryFolders key found in %s" % LIBRARY_FOLDERS_FILE
+            )
+            exit(1)
+
+        for library in libraries_config[dict_key].values():
             library_path = ""
             if "path" in library:
                 library_path = library["path"]
@@ -136,8 +137,8 @@ def try_to_create_desktop_file(filename, app_name, app_id, wm_class, lo_fix=Fals
 
 def create_desktop_file(filename, app_name, app_id, wm_class):
     """Creates hidden desktop file for Steam game."""
-    file = open(HIDDEN_DESKTOP_FILES_DIR + "/" + filename + ".desktop", "w+")
-    file.write(
+    desktop_file = open(HIDDEN_DESKTOP_FILES_DIR + "/" + filename + ".desktop", "w+")
+    desktop_file.write(
         """[Desktop Entry]
 Type=Application
 Name=%s
@@ -148,15 +149,15 @@ StartupWMClass=%s
 NoDisplay=true"""
         % (app_name, app_id, app_id, wm_class)
     )
-    file.close()
+    desktop_file.close()
 
 
 def clear_directory(directory):
     """Removes all files in the directory."""
-    files = next(os.walk(directory))[2]
-    if len(files) > 0:
+    directory_files = next(os.walk(directory))[2]
+    if len(directory_files) > 0:
         print("\nClearing directory %s\n" % directory)
-        for filename in files:
+        for filename in directory_files:
             os.remove(directory + "/" + filename)
             print(" Removed", filename)
 
@@ -199,11 +200,12 @@ def fix_launch_option(app_id, wm_name, wm_name_alt=""):
         loaded = vdf.load(open(conf_file))
 
         steam = loaded["UserLocalConfigStore"]["Software"]["Valve"]["Steam"]
+        dict_key = get_possible_key(steam, "apps", "Apps")
+        if not dict_key:
+            print_warning("[warning] No Apps key found in %s" % conf_file)
+            continue
 
-        if "Apps" in steam.keys():
-            apps = steam["Apps"]
-        else:
-            apps = steam["apps"]
+        apps = steam[dict_key]
 
         if app_id in apps.keys():
             app = apps[app_id]
@@ -230,11 +232,11 @@ def restore_launch_options():
         loaded = vdf.load(open(conf_file))
 
         steam = loaded["UserLocalConfigStore"]["Software"]["Valve"]["Steam"]
+        dict_key = get_possible_key(steam, "apps", "Apps")
+        if not dict_key:
+            continue
 
-        if "Apps" in steam.keys():
-            apps = steam["Apps"]
-        else:
-            apps = steam["apps"]
+        apps = steam[dict_key]
 
         for app_id in apps.keys():
             app = apps[app_id]
@@ -268,7 +270,7 @@ def steam_detect():
     if steam_pids:
         print("\nRunning Steam instance was found.")
         print_warning("It is necessary to exit Steam for some changes to take effect.")
-        text = f"\n{Colors.BOLD}Would you like to terminate Steam now?{Colors.ENDC} [{Colors.BOLD}Y{Colors.ENDC}/n]: "
+        text = f"\n{Colors.BOLD}Would you like to terminate Steam now?{Colors.END} [{Colors.BOLD}Y{Colors.END}/n]: "
         choice = input(text)
         print()
         if choice in ["Y", "y", "Yes", "yes", ""]:
@@ -289,6 +291,13 @@ def update_desktop_database():
         subprocess.run([updater, HOME + "/.local/share/applications"])
     else:
         print_warning("\nUpdate the desktop database for the changes to take effect.")
+
+
+def get_possible_key(dictionary, *possible_keys):
+    for dict_key in possible_keys:
+        if dict_key in dictionary.keys():
+            return dict_key
+    return None
 
 
 def quit_handler(_, __):
@@ -383,8 +392,16 @@ if __name__ == "__main__":
 
     HOME = os.getenv("HOME")
 
+    try:
+        require_version("Gtk", "3.0")
+        from gi.repository import Gtk
+        from gi.repository.Gtk import IconLookupFlags
+    except NameError:
+        print_warning("[error] Gtk 3.0 is required to run this script.")
+
     gtk_settings = Gtk.Settings.get_default()
 
+    GTK_THEME = "unknown"
     if gtk_settings:
         GTK_THEME = gtk_settings.get_property("gtk-icon-theme-name")
     else:
@@ -393,7 +410,11 @@ if __name__ == "__main__":
 
     verbose_print("Current icon theme: %s\n" % GTK_THEME)
 
-    paths = [HOME + "/.local/share/Steam", HOME + "/.steam/steam", HOME + "/.var/app/com.valvesoftware.Steam/.local/share/Steam"]
+    paths = [
+        HOME + "/.local/share/Steam",
+        HOME + "/.steam/steam",
+        HOME + "/.var/app/com.valvesoftware.Steam/.local/share/Steam",
+    ]
     STEAM_INSTALL_DIR = ""
     for path in paths:
         if os.path.isdir(path):
@@ -558,7 +579,9 @@ if __name__ == "__main__":
     proton_games = []
 
     for game in games_with_compat:
-        if any(x in games_with_compat[str(game)]["name"] for x in ["proton", "Proton"]):
+        game_dict = games_with_compat[game]
+        key = get_possible_key(game_dict, "name", "Name")
+        if key and any(x in game_dict[key] for x in ["proton", "Proton"]):
             proton_games.append(game)
 
     # --icons
@@ -579,7 +602,7 @@ if __name__ == "__main__":
             elif key in database["wm_names"]:
                 symbol = "~"
             print(
-                f"{symbol} {Colors.BOLD}{fixable_games[key]:<{margin}}{Colors.ENDC} - {icon_path}"
+                f"{symbol} {Colors.BOLD}{fixable_games[key]:<{margin}}{Colors.END} - {icon_path}"
             )
         print("\n* - game is in our database and can be fixed")
         print("~ - script will edit launch options of the game")
