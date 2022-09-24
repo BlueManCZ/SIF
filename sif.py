@@ -406,7 +406,7 @@ if __name__ == "__main__":
         GTK_THEME = gtk_settings.get_property("gtk-icon-theme-name")
     else:
         print_warning("[error] GTK settings not found.")
-        quit()
+        quit(1)
 
     verbose_print("Current icon theme: %s\n" % GTK_THEME)
 
@@ -433,7 +433,7 @@ if __name__ == "__main__":
         print_warning("[error] Steam installation directory not found.")
         if HOME == "/root":
             print_warning("\nRun script as a normal user, not root.")
-        quit()
+        quit(1)
 
     REAL_PATH = os.path.dirname(os.path.realpath(__file__))
     STEAM_CONFIG_FILE = STEAM_INSTALL_DIR + "/config/config.vdf"
@@ -471,7 +471,7 @@ if __name__ == "__main__":
         print_warning(
             "[error] Steam configuration file %s not found." % STEAM_CONFIG_FILE
         )
-        quit()
+        quit(1)
 
     files = [
         STEAM_INSTALL_DIR + "/config/libraryfolders.vdf",
@@ -498,7 +498,7 @@ if __name__ == "__main__":
         verbose_print("")
     else:
         print_warning("[error] Steam library not found.")
-        quit()
+        quit(1)
 
     # Find localconfig.vdf files
 
@@ -540,11 +540,11 @@ if __name__ == "__main__":
             print("Default settings are already restored. Nothing to do here.")
         quit()
 
-    installed_games = dict(
-        sorted(
-            get_installed_games(library_folders).items(), key=lambda item: int(item[0])
-        )
-    )
+    raw_installed_games = get_installed_games(library_folders).items()
+    installed_games = {
+        key: val
+        for key, val in sorted(raw_installed_games, key=lambda item: int(item[0]))
+    }
     fixable_games = get_fixable_games(installed_games)
 
     # --games
@@ -564,7 +564,7 @@ if __name__ == "__main__":
             database = load(json_file)
     else:
         print_warning("[error] database.json file %s not found." % DATABASE_FILE)
-        quit()
+        quit(1)
 
     games_with_compat = {}
 
@@ -648,7 +648,7 @@ if __name__ == "__main__":
             except OSError:
                 print_warning("[error] Creation of the directory failed!")
                 print("   -", HIDDEN_DESKTOP_FILES_DIR)
-                quit()
+                quit(1)
             else:
                 verbose_print("[ok] Successfully created the directory:")
                 verbose_print("   - %s" % HIDDEN_DESKTOP_FILES_DIR)
@@ -710,7 +710,7 @@ if __name__ == "__main__":
 
         elif game in wm_names:
             # Game is Linux native without WM_CLASS. Using WM_NAME instead.
-            # Steam instance must me terminated for this to work.
+            # Steam instance must be terminated for this to work.
 
             launch_option_counter += 1
 
