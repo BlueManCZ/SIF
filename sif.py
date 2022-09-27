@@ -300,6 +300,11 @@ def get_possible_key(dictionary, *possible_keys):
     return None
 
 
+def exit_with_message(message_text, exit_code=1):
+    print_warning("\n[error] " + message_text)
+    exit(exit_code)
+
+
 def quit_handler(_, __):
     """Handler for exit signal."""
     print("\nSIGINT or CTRL-C detected. Exiting")
@@ -396,8 +401,8 @@ if __name__ == "__main__":
         require_version("Gtk", "3.0")
         from gi.repository import Gtk
         from gi.repository.Gtk import IconLookupFlags
-    except NameError:
-        print_warning("[error] Gtk 3.0 is required to run this script.")
+    except NameError and ValueError:
+        exit_with_message("Gtk 3 is required to run this script.")
 
     gtk_settings = Gtk.Settings.get_default()
 
@@ -405,8 +410,7 @@ if __name__ == "__main__":
     if gtk_settings:
         GTK_THEME = gtk_settings.get_property("gtk-icon-theme-name")
     else:
-        print_warning("[error] GTK settings not found.")
-        quit(1)
+        exit_with_message("GTK settings not found.")
 
     verbose_print("Current icon theme: %s\n" % GTK_THEME)
 
@@ -430,10 +434,10 @@ if __name__ == "__main__":
             break
 
     if not STEAM_INSTALL_DIR:
-        print_warning("[error] Steam installation directory not found.")
+        message = "Steam installation directory not found."
         if HOME == "/root":
-            print_warning("\nRun script as a normal user, not root.")
-        quit(1)
+            message += "\nRun script as a normal user, not root."
+        exit_with_message(message)
 
     REAL_PATH = os.path.dirname(os.path.realpath(__file__))
     STEAM_CONFIG_FILE = STEAM_INSTALL_DIR + "/config/config.vdf"
@@ -468,10 +472,7 @@ if __name__ == "__main__":
         verbose_print("   - %s\n" % STEAM_CONFIG_FILE)
         steam_config_file = vdf.load(open(STEAM_CONFIG_FILE))
     else:
-        print_warning(
-            "[error] Steam configuration file %s not found." % STEAM_CONFIG_FILE
-        )
-        quit(1)
+        exit_with_message("Steam configuration file %s not found." % STEAM_CONFIG_FILE)
 
     files = [
         STEAM_INSTALL_DIR + "/config/libraryfolders.vdf",
@@ -497,8 +498,7 @@ if __name__ == "__main__":
             verbose_print("   - %s/steamapps" % path)
         verbose_print("")
     else:
-        print_warning("[error] Steam library not found.")
-        quit(1)
+        exit_with_message("Steam library not found.")
 
     # Find localconfig.vdf files
 
@@ -563,8 +563,7 @@ if __name__ == "__main__":
         with open(DATABASE_FILE) as json_file:
             database = load(json_file)
     else:
-        print_warning("[error] database.json file %s not found." % DATABASE_FILE)
-        quit(1)
+        exit_with_message("Database file %s not found." % DATABASE_FILE)
 
     games_with_compat = {}
 
