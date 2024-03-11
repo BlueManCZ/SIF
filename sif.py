@@ -390,6 +390,13 @@ if __name__ == "__main__":
         help="fix only one icon with specific APP_ID",
         metavar="APP_ID",
     )
+    parser.add_option(
+        "--proton",
+        action="store_true",
+        dest="proton",
+        default=False,
+        help="works only with --single option and forces a Proton specific WM_CLASS",
+    )
 
     (options, args) = parser.parse_args()
 
@@ -630,7 +637,9 @@ if __name__ == "__main__":
 
     if options.single:
         if options.single in fixable_games:
-            fixable_games = [options.single]
+            fixable_games = {
+                k: v for k, v in fixable_games.items() if k == options.single
+            }
 
     if not fixable_games:
         print_warning("No games found to fix.")
@@ -688,7 +697,7 @@ if __name__ == "__main__":
         game_name = fixable_games[game]
         file_name = game_name.replace(" ", "-")
 
-        if game in proton_games:
+        if game in proton_games or options.single and options.proton:
             # Game uses Proton compatibility tool
 
             game_wm_class = "steam_app_" + game
