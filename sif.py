@@ -577,11 +577,16 @@ if __name__ == "__main__":
 
     proton_games = []
 
+    verbose_print("[proton] These games are using Proton compatibility tool:")
+
     for game in games_with_compat:
         game_dict = games_with_compat[game]
         key = get_possible_key(game_dict, "name", "Name")
+        if game in fixable_games:
+            verbose_print("   - %s - %s" % (fixable_games[game], game_dict[key]))
         if key and any(x in game_dict[key] for x in ["proton", "Proton"]):
             proton_games.append(game)
+    verbose_print("")
 
     # --icons
 
