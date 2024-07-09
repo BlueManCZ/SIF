@@ -58,17 +58,15 @@ def get_steam_libraries():
         libraries_config = vdf.load(open(LIBRARY_FOLDERS_FILE))
 
     if libraries_config:
-        dict_key = get_possible_key(
-            libraries_config, "libraryfolders", "LibraryFolders"
-        )
+        libraries = get_from_dict(libraries_config, ["LibraryFolders"], {})
 
-        if not dict_key:
+        if not libraries:
             print_warning(
                 "[error] No LibraryFolders key found in %s" % LIBRARY_FOLDERS_FILE
             )
             exit(1)
 
-        for library in libraries_config[dict_key].values():
+        for library in libraries.values():
             library_path = ""
             if "path" in library:
                 library_path = library["path"]
@@ -199,13 +197,14 @@ def fix_launch_option(app_id, wm_name, wm_name_alt=""):
     for conf_file in localconfig_paths:
         loaded = vdf.load(open(conf_file))
 
-        steam = loaded["UserLocalConfigStore"]["Software"]["Valve"]["Steam"]
-        dict_key = get_possible_key(steam, "apps", "Apps")
-        if not dict_key:
+        steam = get_from_dict(
+            loaded, ["UserLocalConfigStore", "Software", "Valve", "Steam"], {}
+        )
+        apps = get_from_dict(steam, ["Apps"], {})
+
+        if not apps:
             print_warning("[warning] No Apps key found in %s" % conf_file)
             continue
-
-        apps = steam[dict_key]
 
         if app_id in apps.keys():
             app = apps[app_id]
@@ -231,12 +230,13 @@ def restore_launch_options():
     for conf_file in localconfig_paths:
         loaded = vdf.load(open(conf_file))
 
-        steam = loaded["UserLocalConfigStore"]["Software"]["Valve"]["Steam"]
-        dict_key = get_possible_key(steam, "apps", "Apps")
-        if not dict_key:
-            continue
+        steam = get_from_dict(
+            loaded, ["UserLocalConfigStore", "Software", "Valve", "Steam"], {}
+        )
+        apps = get_from_dict(steam, ["Apps"], {})
 
-        apps = steam[dict_key]
+        if not apps:
+            continue
 
         for app_id in apps.keys():
             app = apps[app_id]
@@ -293,11 +293,17 @@ def update_desktop_database():
         print_warning("\nUpdate the desktop database for the changes to take effect.")
 
 
-def get_possible_key(dictionary, *possible_keys):
-    for dict_key in possible_keys:
-        if dict_key in dictionary.keys():
-            return dict_key
-    return None
+def get_from_dict(data: dict, keys: list, default=None):
+    """Get value from nested dictionary by list of keys. Try to find key in lower case if not found."""
+    current = data
+    for key in keys:
+        if key in current:
+            current = current[key]
+        elif key.lower() in current:
+            current = current[key.lower()]
+        else:
+            return default
+    return current
 
 
 def exit_with_message(message_text, exit_code=1):
@@ -572,26 +578,25 @@ if __name__ == "__main__":
     else:
         exit_with_message("Database file %s not found." % DATABASE_FILE)
 
-    games_with_compat = {}
-
-    if (
-        "CompatToolMapping"
-        in steam_config_file["InstallConfigStore"]["Software"]["Valve"]["Steam"]
-    ):
-        games_with_compat = steam_config_file["InstallConfigStore"]["Software"][
-            "Valve"
-        ]["Steam"]["CompatToolMapping"]
-
+    games_with_compat = get_from_dict(
+        steam_config_file,
+        ["InstallConfigStore", "Software", "Valve", "Steam", "CompatToolMapping"],
+        {},
+    )
     proton_games = []
 
     verbose_print("[proton] These games are using Proton compatibility tool:")
 
     for game in games_with_compat:
         game_dict = games_with_compat[game]
-        key = get_possible_key(game_dict, "name", "Name")
         if game in fixable_games:
-            verbose_print("   - %s - %s" % (fixable_games[game], game_dict[key]))
-        if key and any(x in game_dict[key] for x in ["proton", "Proton"]):
+            verbose_print(
+                "   - %s - %s"
+                % (fixable_games[game], get_from_dict(game_dict, ["Name"]))
+            )
+        if any(
+            x in get_from_dict(game_dict, ["Name"], []) for x in ["proton", "Proton"]
+        ):
             proton_games.append(game)
     verbose_print("")
 
