@@ -1,0 +1,22 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+PyGObject = "*"
+requests = "*"
+vdf = "*"
+
+[dev-packages]
+black = "*"
+flake8-for-pycharm = "*"
+
+[requires]
+python_version = "3.12"
+
+[scripts]
+black = "black --check --line-length 120 . --verbose"
+black_fix = "black --line-length 120 . --verbose"
+flake = "flake8 . -v"
+test = "python -m unittest -v"
