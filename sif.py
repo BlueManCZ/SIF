@@ -210,8 +210,6 @@ def fix_launch_option(app_id, wm_name, wm_name_alt=""):
                     wm_name,
                     wm_name_alt,
                 )
-            # elif wm_name == "Pillars of Eternity":
-            #     app["LaunchOptions"] += '& sleep 5 && %s "%s";' % (script, wm_name)
             else:
                 app["LaunchOptions"] += '& %s "%s";' % (script, wm_name)
         vdf.dump(loaded, open(conf_file, "w"), pretty=True)
