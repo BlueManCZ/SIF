@@ -202,16 +202,19 @@ def fix_launch_option(app_id, wm_name, wm_name_alt=""):
             app = apps[app_id]
             if "LaunchOptions" not in app.keys():
                 app["LaunchOptions"] = ""
-            app["LaunchOptions"] = sub("&\\s/.*fix-wm-class\\.sh.*?;", "", app["LaunchOptions"])
+            app["LaunchOptions"] = sub("\\s/.*fix-wm-class\\.sh.*?;", "", app["LaunchOptions"])
+            app["LaunchOptions"] = sub("%command%", "", app["LaunchOptions"])
+            launch_options = app["LaunchOptions"].strip()
             script = str(WM_CLASS_FIXER_SCRIPT)
             if wm_name_alt:
-                app["LaunchOptions"] += '& %s "%s" "%s";' % (
+                app["LaunchOptions"] = '%s %s %%command%% "%s" "%s";' % (
+                    launch_options,
                     script,
                     wm_name,
                     wm_name_alt,
                 )
             else:
-                app["LaunchOptions"] += '& %s "%s";' % (script, wm_name)
+                app["LaunchOptions"] = '%s %s %%command%% "%s";' % (launch_options, script, wm_name)
         vdf.dump(loaded, open(conf_file, "w"), pretty=True)
 
 
