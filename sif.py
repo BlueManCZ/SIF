@@ -207,14 +207,14 @@ def fix_launch_option(app_id, wm_name, wm_name_alt=""):
             launch_options = app["LaunchOptions"].strip()
             script = str(WM_CLASS_FIXER_SCRIPT)
             if wm_name_alt:
-                app["LaunchOptions"] = '%s %s %%command%% "%s" "%s";' % (
+                app["LaunchOptions"] = '%s %s "%%command%%" "%s" "%s";' % (
                     launch_options,
                     script,
                     wm_name,
                     wm_name_alt,
                 )
             else:
-                app["LaunchOptions"] = '%s %s %%command%% "%s";' % (launch_options, script, wm_name)
+                app["LaunchOptions"] = '%s %s "%%command%%" "%s";' % (launch_options, script, wm_name)
         vdf.dump(loaded, open(conf_file, "w"), pretty=True)
 
 
@@ -232,7 +232,8 @@ def restore_launch_options():
         for app_id in apps.keys():
             app = apps[app_id]
             if "LaunchOptions" in app.keys():
-                app["LaunchOptions"] = sub("&\\s/.*fix-wm-class\\.sh.*?;", "", app["LaunchOptions"])
+                app["LaunchOptions"] = sub("\\s/.*fix-wm-class\\.sh.*?;", " %command%", app["LaunchOptions"])
+                app["LaunchOptions"] = app["LaunchOptions"].strip()
         vdf.dump(loaded, open(conf_file, "w"), pretty=True)
 
 
