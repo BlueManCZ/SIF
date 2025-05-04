@@ -207,14 +207,19 @@ def fix_launch_option(app_id, wm_name, wm_name_alt=""):
             launch_options = app["LaunchOptions"].strip()
             script = str(WM_CLASS_FIXER_SCRIPT)
             if wm_name_alt:
-                app["LaunchOptions"] = '%s %s "%%command%%" "%s" "%s";' % (
+                app["LaunchOptions"] = '%s %s "%s" "%s" %%command%%;' % (
                     launch_options,
                     script,
                     wm_name,
                     wm_name_alt,
                 )
             else:
-                app["LaunchOptions"] = '%s %s "%%command%%" "%s";' % (launch_options, script, wm_name)
+                app["LaunchOptions"] = '%s %s "%s" "%s" %%command%%;' % (
+                    launch_options,
+                    script,
+                    wm_name,
+                    wm_name,
+                )
         vdf.dump(loaded, open(conf_file, "w"), pretty=True)
 
 
@@ -719,7 +724,7 @@ if __name__ == "__main__":
         if steam_detected:
             print_warning("\nSome games couldn't be fixed due to running Steam.\nExit Steam and try it again.")
         else:
-            print("\n * - added fix to game launch options")
+            print("\n * - added fix to game launch options. Please double check to ensure your launch options are correct.")
 
     if options.pretend:
         print_warning("\nNo changes were made because --pretend option was used.")
