@@ -724,7 +724,7 @@ if __name__ == "__main__":
         if steam_detected:
             print_warning("\nSome games couldn't be fixed due to running Steam.\nExit Steam and try it again.")
         else:
-            print("\n * - added fix to game launch options. Please double check to ensure your launch options are correct.")
+            print("\n * - added fix to game launch options. Double check your launch options just in case.")
 
     if options.pretend:
         print_warning("\nNo changes were made because --pretend option was used.")
