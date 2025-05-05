@@ -202,18 +202,24 @@ def fix_launch_option(app_id, wm_name, wm_name_alt=""):
             app = apps[app_id]
             if "LaunchOptions" not in app.keys():
                 app["LaunchOptions"] = ""
-            app["LaunchOptions"] = sub("&\\s/.*fix-wm-class\\.sh.*?;", "", app["LaunchOptions"])
+            app["LaunchOptions"] = sub("\\s/.*fix-wm-class\\.sh.*?;", "", app["LaunchOptions"])
+            app["LaunchOptions"] = sub("%command%", "", app["LaunchOptions"])
+            launch_options = app["LaunchOptions"].strip()
             script = str(WM_CLASS_FIXER_SCRIPT)
             if wm_name_alt:
-                app["LaunchOptions"] += '& %s "%s" "%s";' % (
+                app["LaunchOptions"] = '%s %s "%s" "%s" %%command%%;' % (
+                    launch_options,
                     script,
                     wm_name,
                     wm_name_alt,
                 )
-            elif wm_name == "Pillars of Eternity":
-                app["LaunchOptions"] += '& sleep 5 && %s "%s";' % (script, wm_name)
             else:
-                app["LaunchOptions"] += '& %s "%s";' % (script, wm_name)
+                app["LaunchOptions"] = '%s %s "%s" "%s" %%command%%;' % (
+                    launch_options,
+                    script,
+                    wm_name,
+                    wm_name,
+                )
         vdf.dump(loaded, open(conf_file, "w"), pretty=True)
 
 
@@ -231,7 +237,8 @@ def restore_launch_options():
         for app_id in apps.keys():
             app = apps[app_id]
             if "LaunchOptions" in app.keys():
-                app["LaunchOptions"] = sub("&\\s/.*fix-wm-class\\.sh.*?;", "", app["LaunchOptions"])
+                app["LaunchOptions"] = sub("\\s/.*fix-wm-class\\.sh.*?;", " %command%", app["LaunchOptions"])
+                app["LaunchOptions"] = app["LaunchOptions"].strip()
         vdf.dump(loaded, open(conf_file, "w"), pretty=True)
 
 
@@ -717,7 +724,7 @@ if __name__ == "__main__":
         if steam_detected:
             print_warning("\nSome games couldn't be fixed due to running Steam.\nExit Steam and try it again.")
         else:
-            print("\n * - added fix to game launch options")
+            print("\n * - added fix to game launch options. Double check your launch options just in case.")
 
     if options.pretend:
         print_warning("\nNo changes were made because --pretend option was used.")
