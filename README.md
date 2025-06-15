@@ -46,6 +46,13 @@ Gentoo users may use [ebuild](https://github.com/BlueManCZ/edgets/blob/master/ap
 
 Arch users may use [pkgbuild](https://aur.archlinux.org/cgit/aur.git/tree/PKGBUILD?h=sif-git) from the [AUR](https://aur.archlinux.org/packages/sif-git/).
 
+Fedora and other RPM-based distro users can use the [COPR Repository](https://copr.fedorainfracloud.org/coprs/chapien/SIF). Install with:
+```shell
+sudo dnf copr enable chapien/SIF
+sudo dnf install sif-steam
+```
+The COPR is maintained by Chapien. Send installation issues to [inquiries@chapien.net](mailto:inquiries@chapien.net)
+
 # Usage
 
 See `./sif.py --help` for all options.
