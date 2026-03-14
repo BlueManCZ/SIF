@@ -134,17 +134,14 @@ def try_to_create_desktop_file(filename, app_name, app_id, wm_class, lo_fix=Fals
 def create_desktop_file(filename, app_name, app_id, wm_class):
     """Creates hidden desktop file for Steam game."""
     desktop_file = open(HIDDEN_DESKTOP_FILES_DIR + "/" + filename + ".desktop", "w+")
-    desktop_file.write(
-        """[Desktop Entry]
+    desktop_file.write("""[Desktop Entry]
 Type=Application
 Name=%s
 Icon=steam_icon_%s
 Exec=steam steam://rungameid/%s
 Terminal=false
 StartupWMClass=%s
-NoDisplay=true"""
-        % (app_name, app_id, app_id, wm_class)
-    )
+NoDisplay=true""" % (app_name, app_id, app_id, wm_class))
     desktop_file.close()
 
 
@@ -399,7 +396,7 @@ if __name__ == "__main__":
         help="works only with --single option and forces a Proton specific WM_CLASS",
     )
 
-    (options, args) = parser.parse_args()
+    options, args = parser.parse_args()
 
     # Set constant variables
 
