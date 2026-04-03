@@ -34,7 +34,7 @@ and **[vdf](https://pypi.org/project/vdf/)**. You can use your package manager o
 
 Example (after you clone the respository): `pip3 install -r requirements.txt --user`
 
-Also make sure you have **[xdotool](https://www.mankier.com/1/xdotool)** installed. It should be available in the official repositories.
+Also make sure you have the **[xdotool](https://www.mankier.com/1/xdotool)** installed. It should be available in the official repositories.
 
 After that, all you need to do is **clone** this repository:
 ```
@@ -84,41 +84,41 @@ You can also fix only one specific game:
 ```
 
 ### Restore
-If you want to **remove** all changes and restore default icons:
+If you want to **remove** all changes and restore to default icons:
 ```
 ./sif.py --restore
 ```
 
 # Contribution
 
-For the fix to work, I need to know WM_CLASS of each individual game.
+For the fix to work, I need to know the WM_CLASS of each individual game.
 I can create fixes only for games which I have installed and I can get
 their WM_CLASS.
 
-If you want append your game to our database, you have to know **APP_ID**
-and **WM_CLASS** of this game.
+If you want append your game to our database, you have to know the **APP_ID**
+and **WM_CLASS** of the game.
 
 #### Get APP_ID
 
-There are multiple ways, how to get APP_ID of Steam game.
+There are multiple ways, how to get an APP_ID of a Steam game.
 
 1. You can use `./sif.py --games` to get APP_IDs of all installed games.
-2. From the [steamdb.info](https://steamdb.info/).
-3. From the [store.steampowered.com](https://store.steampowered.com/) URL address.
+2. From [SteamDB](https://steamdb.info/).
+3. From [Steam's](https://store.steampowered.com/) URL address.
 
 
 #### Get WM_CLASS
 
-Users with xorg can use xprop tool.
+Users with xorg can use the xprop tool.
 
-1. Start your game from Steam library.
-2. Open new terminal window and run `xprop WM_CLASS`.
+1. Start your game from your Steam library.
+2. Open a new terminal window and run `xprop WM_CLASS`.
 3. Switch to the game window with Alt-Tab and left click with mouse on it.
 4. Switch back to the terminal and get your WM_CLASS.
 
 #### Missing WM_CLASS?
 
-Some games have their WM_CLASS missing. In this case you can use a WM_NAME of the game. `xprop WM_NAME`
+Some games have their WM_CLASS missing. In this case you can get the WM_NAME of the game. `xprop WM_NAME`
 
 #### Proton games are supported natively
 
@@ -127,8 +127,8 @@ WM_CLASS of each Proton game is `steam_app_<APP_ID>`. It is calculated automatic
 
 #### Create an issue or append a database 
 
-You can open a [new issue](https://github.com/BlueManCZ/SIF/issues), where you provide APP_ID, WM_CLASS (and your icon theme),
-and I will add your game to the database as soon as possible.
+You can open a [new issue](https://github.com/BlueManCZ/SIF/issues), where you provide the APP_ID, WM_CLASS (and your icon theme),
+and I will also add your game to the database as soon as possible.
 
 You can also fork this repository, edit [database.json](https://github.com/BlueManCZ/SIF/blob/master/database.json)
 yourself and create a [pull request](https://github.com/BlueManCZ/SIF/pulls). Please keep the file sorted by APP_ID.
