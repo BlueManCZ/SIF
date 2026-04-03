@@ -4,7 +4,7 @@
 
 **SIF is a simple Python script allowing you to fix runtime
 icons of Steam games displayed in dock or panel to match
-Linux system icon theme.**
+Linux's system icon theme.**
 
 ![Animation](images/animation.svg)
 
@@ -29,7 +29,7 @@ Visit [wiki/Description](https://github.com/BlueManCZ/SIF/wiki/Description).
 
 # Installation
 
-Make sure you have installed Python modules **[PyGObject](https://pypi.org/project/PyGObject/)**, **[requests](https://pypi.org/project/requests/)**
+Make sure you have installed these Python modules **[PyGObject](https://pypi.org/project/PyGObject/)**, **[requests](https://pypi.org/project/requests/)**
 and **[vdf](https://pypi.org/project/vdf/)**. You can use your package manager or pip3 to install them.
 
 Example (after you clone the respository): `pip3 install -r requirements.txt --user`
@@ -46,7 +46,7 @@ Gentoo users may use [ebuild](https://github.com/BlueManCZ/edgets/blob/master/ap
 
 Arch users may use [pkgbuild](https://aur.archlinux.org/cgit/aur.git/tree/PKGBUILD?h=sif-git) from the [AUR](https://aur.archlinux.org/packages/sif-git/).
 
-Fedora and other RPM-based distro users can use the [COPR Repository](https://copr.fedorainfracloud.org/coprs/chapien/SIF). Install with:
+Fedora and other RPM-based distro users can use the [COPR Repository](https://copr.fedorainfracloud.org/coprs/chapien/SIF). Install it with:
 ```shell
 sudo dnf copr enable chapien/SIF
 sudo dnf install sif-steam
@@ -125,7 +125,7 @@ Some games have their WM_CLASS missing. In this case you can use a WM_NAME of th
 Do not contribute Proton games to the database, because they are supported natively.
 WM_CLASS of each Proton game is `steam_app_<APP_ID>`. It is calculated automatically.
 
-#### Create issue or append database 
+#### Create an issue or append a database 
 
 You can open a [new issue](https://github.com/BlueManCZ/SIF/issues), where you provide APP_ID, WM_CLASS (and your icon theme),
 and I will add your game to the database as soon as possible.
