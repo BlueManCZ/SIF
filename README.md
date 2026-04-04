@@ -3,13 +3,13 @@
 ![Dock with icons after fix](images/sif.png)
 
 **SIF is a simple Python script allowing you to fix runtime
-icons of Steam games displayed in dock or panel to match
-Linux's system icon theme.**
+icons of Steam games displayed in a dock or panel to match
+the Linux system icon theme.**
 
 ![Animation](images/animation.svg)
 
 **It aims to be safe, simple and intuitive.**<br>The script must be run by a regular
-user and modifies only files in `~/.local/share/applications` directory.
+user and modifies only files in the `~/.local/share/applications` directory.
 
 I created this script because I find it very frustrating when the game
 icons don't fit the selected icon theme.
@@ -29,12 +29,12 @@ Visit [wiki/Description](https://github.com/BlueManCZ/SIF/wiki/Description).
 
 # Installation
 
-Make sure you have installed these Python modules **[PyGObject](https://pypi.org/project/PyGObject/)**, **[requests](https://pypi.org/project/requests/)**
+Make sure you have installed the following Python modules: **[PyGObject](https://pypi.org/project/PyGObject/)**, **[requests](https://pypi.org/project/requests/)**
 and **[vdf](https://pypi.org/project/vdf/)**. You can use your package manager or pip3 to install them.
 
-Example (after you clone the respository): `pip3 install -r requirements.txt --user`
+Example (after you clone the repository): `pip3 install -r requirements.txt --user`
 
-Also make sure you have the **[xdotool](https://www.mankier.com/1/xdotool)** installed. It should be available in the official repositories.
+Also, make sure you have **[xdotool](https://www.mankier.com/1/xdotool)** installed. It should be available in the official repositories.
 
 After that, all you need to do is **clone** this repository:
 ```
@@ -70,7 +70,7 @@ or:
 
 ### Apply
 
-If commands above worked without a problem, you can **apply** the fix:
+If the commands above worked without a problem, you can **apply** the fix:
 ```
 ./sif.py 
 ```
@@ -84,7 +84,7 @@ You can also fix only one specific game:
 ```
 
 ### Restore
-If you want to **remove** all changes and restore to default icons:
+If you want to **remove** all changes and restore the default icons:
 ```
 ./sif.py --restore
 ```
@@ -95,12 +95,12 @@ For the fix to work, I need to know the WM_CLASS of each individual game.
 I can create fixes only for games which I have installed and I can get
 their WM_CLASS.
 
-If you want append your game to our database, you have to know the **APP_ID**
+If you want to append your game to our database, you have to know the **APP_ID**
 and **WM_CLASS** of the game.
 
 #### Get APP_ID
 
-There are multiple ways, how to get an APP_ID of a Steam game.
+There are multiple ways to get an APP_ID of a Steam game.
 
 1. You can use `./sif.py --games` to get APP_IDs of all installed games.
 2. From [SteamDB](https://steamdb.info/).
@@ -113,7 +113,7 @@ Users with xorg can use the xprop tool.
 
 1. Start your game from your Steam library.
 2. Open a new terminal window and run `xprop WM_CLASS`.
-3. Switch to the game window with Alt-Tab and left click with mouse on it.
+3. Switch to the game window with Alt-Tab and left click on it with the mouse.
 4. Switch back to the terminal and get your WM_CLASS.
 
 #### Missing WM_CLASS?
@@ -122,13 +122,13 @@ Some games have their WM_CLASS missing. In this case you can get the WM_NAME of 
 
 #### Proton games are supported natively
 
-Do not contribute Proton games to the database, because they are supported natively.
+Do not contribute Proton games to the database because they are supported natively.
 WM_CLASS of each Proton game is `steam_app_<APP_ID>`. It is calculated automatically.
 
-#### Create an issue or append a database 
+#### Create an issue or append the database
 
 You can open a [new issue](https://github.com/BlueManCZ/SIF/issues), where you provide the APP_ID, WM_CLASS (and your icon theme),
-and I will also add your game to the database as soon as possible.
+and I will add your game to the database as soon as possible.
 
 You can also fork this repository, edit [database.json](https://github.com/BlueManCZ/SIF/blob/master/database.json)
 yourself and create a [pull request](https://github.com/BlueManCZ/SIF/pulls). Please keep the file sorted by APP_ID.
